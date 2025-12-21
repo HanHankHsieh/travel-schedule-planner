@@ -934,7 +934,7 @@
 
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active');
-            if (btn.getAttribute('onclick').includes(activeDay)) {
+            if (btn.getAttribute('onclick')?.includes(activeDay)) {
                 btn.classList.add('active');
             }
         });
@@ -1280,34 +1280,54 @@
         }
 
         function openExportModal() {
-            const modal = document.getElementById('exportModal');
-            const textarea = document.getElementById('exportText');
-            textarea.value = JSON.stringify(appData, null, 4);
-            modal.style.display = 'block';
+            const exportText = document.getElementById('exportText');
+            const exportObj = {
+                itinerary: appData,
+                wishlist: wishlistData
+            };
+            exportText.value = JSON.stringify(exportObj, null, 2);
+            document.getElementById('exportModal').style.display = 'block';
         }
+
 
         function closeModal() {
             document.getElementById('exportModal').style.display = 'none';
         }
 
         function importData() {
-            const textarea = document.getElementById('exportText');
             try {
-                const newData = JSON.parse(textarea.value);
-                if (Array.isArray(newData)) {
-                    if (confirm("確定要匯入這份資料嗎?這將會覆蓋目前的行程。")) {
-                        appData = newData;
-                        saveData();
-                        closeModal();
-                        alert("✨ 資料匯入成功!");
-                    }
-                } else {
-                    alert("❌ 格式錯誤:必須是陣列 (Array)。");
+                const text = document.getElementById('exportText').value;
+                if (!text) return alert("請貼上 JSON 資料");
+
+                const imported = JSON.parse(text);
+
+                if (Array.isArray(imported.itinerary)) {
+                    // 匯入行程
+                    appData = imported.itinerary.map(day => ({
+                        ...day,
+                        spots: day.spots.map(normalizeSpot)
+                    }));
+                    localStorage.setItem('poke_itinerary_data', JSON.stringify(appData));
                 }
-            } catch (e) {
-                alert("❌ JSON 格式錯誤:" + e.message);
+
+                if (imported.wishlist) {
+                    // 匯入口袋清單
+                    wishlistData = {
+                        ...imported.wishlist,
+                        spots: imported.wishlist.spots.map(normalizeSpot)
+                    };
+                    localStorage.setItem('poke_wishlist_data', JSON.stringify(wishlistData));
+                }
+
+                render();
+                closeModal();
+                alert("✨ 資料匯入成功！");
+            } catch (err) {
+                console.error(err);
+                alert("❌ 匯入失敗，請確認 JSON 格式正確");
             }
         }
+
 
         window.onclick = function (event) {
             const exportModal = document.getElementById('exportModal');
