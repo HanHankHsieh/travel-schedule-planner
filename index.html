@@ -32,12 +32,13 @@
             font-family: 'Nunito', 'Quicksand', sans-serif;
             background: var(--bg-gradient);
             margin: 0;
-            padding: 20px;
+            padding: 10px; /* 手機版間距縮小一點 */
             color: var(--text-dark);
-            min-height: 100vh;
+            min-height: 100dvh; /* 改用 dvh */
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            -webkit-font-smoothing: antialiased; /* 字體流暢優化 */
         }
 
         .main-container {
@@ -47,9 +48,8 @@
             border: 3px solid var(--border-color);
             border-radius: 25px;
             box-shadow: 0 10px 30px var(--shadow-color);
-            overflow: hidden;
+            overflow: visible; /* 改為 visible 避免裁切內容 */
         }
-
         header {
             background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
             padding: 20px;
@@ -148,6 +148,9 @@
             background-color: var(--card-bg);
             box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
             transition: transform 0.3s, box-shadow 0.3s;
+            /* 加入以下兩行解決 Safari 消失問題 */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
 
         .spot-card:hover {
@@ -459,7 +462,7 @@
             z-index: 1000;
             left: 50%;
             bottom: 30px;
-            transformtranslateX(-50%);
+            transform: translateX(-50%); /* 修正語法 */
             font-size: 14px;
             font-weight: 600;
             box-shadow: 0 4px 12px var(--shadow-color);
