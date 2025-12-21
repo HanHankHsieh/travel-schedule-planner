@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 行程表 🌸</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #FFB6C1;
+            --primary-blue: #A8D8EA;
+            --primary-yellow: #FFF4B0;
+            --primary-purple: #D4A5D8;
+            --primary-green: #B8E6B8;
+            --text-dark: #5A5A5A;
+            --text-light: #8A8A8A;
+            --bg-color: #FFF5F7;
+            --bg-gradient: linear-gradient(135deg, #FFF5F7 0%, #F0F8FF 100%);
+            --border-color: #FFB6C1;
+            --shadow-color: rgba(255, 182, 193, 0.3);
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', 'Quicksand', sans-serif;
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+        }
+
+        .tabs {
+            display: flex;
+            background: linear-gradient(to bottom, #FFF 0%, #FFF5F7 100%);
+            overflow-x: auto;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border: 2px solid transparent;
+            background: none;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 3px;
+            border-radius: 15px;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: var(--text-light);
+        }
+
+        .tab-btn:hover {
+            background-color: #FFF;
+            border-color: var(--primary-pink);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            color: white;
+            border-color: var(--primary-pink);
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        .content-area {
+            padding: 20px;
+            background-color: #fff;
+            min-height: 400px;
+        }
+
+        .day-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .day-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .day-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--primary-pink);
+        }
+
+        .spot-card {
+            border: 2px solid var(--primary-pink);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .spot-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3);
+        }
+
+        .spot-header {
+            background: linear-gradient(135deg, var(--primary-yellow) 0%, #FFF9E6 100%);
+            padding: 12px;
+            font-weight: 700;
+            border-bottom: 2px dashed var(--primary-pink);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 18px 18px 0 0;
+            gap: 8px;
+        }
+
+        .spot-title-group {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .spot-title-group::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(255, 182, 193, 0.4);
+        }
+
+        .spot-time {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background-color: #fff;
+            padding: 6px 12px;
+            border: 2px solid var(--primary-purple);
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(212, 165, 216, 0.3);
+            color: var(--primary-purple);
+            white-space: nowrap;
+        }
+
+        .spot-desc {
+            padding: 12px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .spot-link,
+        .spot-transport {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            margin: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spot-link {
+            color: var(--primary-purple);
+            background-color: #F5F0FF;
+            border-left: 3px solid var(--primary-purple);
+        }
+
+        .spot-link a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .spot-link a:hover {
+            text-decoration: underline;
+        }
+
+        .spot-transport {
+            color: var(--primary-blue);
+            background-color: #F0F8FF;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .spot-transport-content {
+            flex: 1;
+        }
+
+        .shopping-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .shopping-item {
+            padding: 12px;
+            border-bottom: 1px solid #f9f9f9;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .shopping-item:last-child {
+            border-bottom: none;
+        }
+
+        .shopping-item:hover {
+            background-color: #FFF5F7;
+        }
+
+        .checkbox-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .shopping-item input[type="checkbox"] {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            position: absolute;
+            z-index: 2;
+        }
+
+        .custom-checkbox {
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--primary-pink);
+            border-radius: 8px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .shopping-item input[type="checkbox"]:checked+.custom-checkbox {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            border-color: var(--primary-purple);
+        }
+
+        .shopping-item input[type="checkbox"]:checked+.custom-checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .item-text {
+            flex: 1;
+        }
+
+        .shopping-item input[type="checkbox"]:checked~.item-text {
+            text-decoration: line-through;
+            color: #ccc;
+        }
+
+        .add-spot-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #FFF 0%, #FFF5F7 100%);
+            border: 2px dashed var(--primary-pink);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--primary-pink);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .add-spot-btn:hover {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .add-item-btn {
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            cursor: pointer;
+            border-top: 1px dashed #eee;
+        }
+
+        .add-item-btn:hover {
+            background-color: #FFF5F7;
+            color: var(--primary-pink);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #FF9AA2 0%, #FF8A95 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-left: auto;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(255, 154, 162, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #FF6B7A 0%, #FF5A6D 100%);
+            transform: scale(1.1);
+        }
+
+        .delete-btn-small {
+            background: linear-gradient(135deg, #FFB6C1 0%, #FFA6B1 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-left: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .delete-btn-small:hover {
+            background: linear-gradient(135deg, #FF9AA2 0%, #FF8A95 100%);
+            transform: scale(1.1);
+        }
+
+        [contenteditable="true"] {
+            border-bottom: 1px dashed var(--primary-pink);
+            padding-bottom: 2px;
+            min-width: 50px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 182, 193, 0.1);
+            outline: 1px dashed var(--primary-pink);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: none;
+            background-color: rgba(255, 244, 176, 0.2);
+            border-bottom: 2px solid var(--primary-purple);
+        }
+
+        footer {
+            padding: 15px;
+            background: linear-gradient(to bottom, #FFF 0%, #FFF5F7 100%);
+            text-align: center;
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+            color: white;
+            border: 2px solid transparent;
+            padding: 10px 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--shadow-color);
+        }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            color: #fff;
+            text-align: center;
+            border-radius: 15px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transformtranslateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: toastIn 0.5s, toastOut 0.5s 2.5s;
+        }
+
+        @keyframes toastIn {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 25px;
+            border: 3px solid var(--border-color);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h3 {
+            color: var(--text-dark);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            margin-top: 0;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 300px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: scroll;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .day-controls {
+            display: flex;
+            justify-content: center; /* 置中 */
+            gap: 15px;               /* 按鈕間距 */
+            margin: 15px 0;          /* 上下邊距 */
+        }
+
+        .day-controls button {
+            padding: 10px 18px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            border-radius: 15px;
+            border: 2px dashed var(--primary-pink);
+            background: linear-gradient(135deg, #FFF 0%, #FFF5F7 100%);
+            color: var(--primary-pink);
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        .day-controls button:hover {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-purple) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px var(--shadow-color);
+        }
+
+        .tab-btn {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px; /* 視需要調整寬度 */
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <header>
+            <h1 id="page-title" contenteditable="true">🌸 福岡五日冒險日誌 🌸</h1>
+        </header>
+
+        <nav class="tabs" id="tabs"></nav>
+
+        <div class="day-controls">
+            <button onclick="addDay()">＋ 新增一天</button>
+            <button onclick="removeLastDay()">－ 刪除最後一天</button>
+        </div>
+
+        <div class="content-area" id="content-area"></div>
+
+        <footer>
+            <button class="share-btn" onclick="shareStatus()">
+                📋 分享代買清單
+            </button>
+            <button class="share-btn" style="background: linear-gradient(135deg, #FFA07A 0%, #FF8C69 100%);"
+                onclick="openExportModal()">
+                💾 匯出/匯入
+            </button>
+            <button class="share-btn" style="background: linear-gradient(135deg, #FF9AA2 0%, #FF8A95 100%);"
+                onclick="resetData()">
+                🔄 重置資料
+            </button>
+        </footer>
+    </div>
+
+    <div id="toast">✨ 已複製連結到剪貼簿!</div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <h3>💾 匯出/匯入資料 (JSON)</h3>
+            <p style="color: var(--text-light);">您可以複製下方內容備份,或貼上新的 JSON 資料並點擊「匯入」來更新行程。</p>
+            <textarea id="exportText" class="modal-textarea"></textarea>
+            <div class="modal-actions">
+                <button class="share-btn" style="background: linear-gradient(135deg, #999 0%, #888 100%);"
+                    onclick="closeModal()">關閉</button>
+                <button class="share-btn" onclick="importData()">✓ 匯入並儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="importModal" class="modal">
+    <div class="modal-content">
+            <h3>📥 加入口袋名單到行程</h3>
+
+            <p style="color: var(--text-light);">請選擇要加入的行程天數</p>
+
+            <select id="importDaySelect"
+                style="width:100%; padding:10px; border-radius:10px; border:2px solid var(--border-color); font-size:1rem;">
+                <option value="day1">Day 1</option>
+                <option value="day2">Day 2</option>
+                <option value="day3">Day 3</option>
+                <option value="day4">Day 4</option>
+                <option value="day5">Day 5</option>
+            </select>
+
+            <div class="modal-actions">
+                <button class="share-btn" style="background:linear-gradient(135deg,#999,#888)"
+                    onclick="closeImportModal()">取消</button>
+                <button class="share-btn" onclick="confirmImport()">✓ 加入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageTitle = document.getElementById('page-title');
+
+        // 編輯完成後更新 document.title
+        pageTitle.onblur = (e) => {
+            const newTitle = e.target.innerText.trim();
+            document.title = newTitle;
+
+            // 你也可以選擇同步到 localStorage，下次打開仍保留
+            localStorage.setItem('page_title', newTitle);
+        };
+
+        // 初始化時讀取 localStorage
+        const savedTitle = localStorage.getItem('page_title');
+        if (savedTitle) {
+            pageTitle.textContent = savedTitle;
+            document.title = savedTitle;
+        }
+
+        // 預設行程資料 (保持不變)
+        const defaultItinerary = [
+            {
+                day: "day1",
+                title: "Day 1: 初始之日 - 博多市區與拉麵",
+                spots: [
+                    {
+                        id: "s1-1",
+                        name: "博多車站 (Hakata Station)",
+                        time: "10:00",
+                        desc: "冒險的起點,繁華的交通樞紐。",
+                        url: "https://maps.app.goo.gl/LKQZvyhskXQu3JQg7",
+                        transport: "JR 博多站直達",
+                        items: [
+                            { id: "d1-i1", name: "博多通饅頭 (Torimon)", checked: false },
+                            { id: "d1-i2", name: "小雞蛋糕 (Hiyoko)", checked: false }
+                        ]
+                    },
+                    {
+                        id: "s1-2",
+                        name: "拉麵道館 (Ramen Stadium)",
+                        time: "12:30",
+                        desc: "挑戰味蕾的極限,尋找最強拉麵。",
+                        url: "https://maps.app.goo.gl/LKQZvyhskXQu3JQg7",
+                        transport: "位於博多車站內,步行即達",
+                        items: [
+                            { id: "d1-i3", name: "名店拉麵調理包", checked: false },
+                            { id: "d1-i4", name: "福岡限定拉麵碗", checked: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                day: "day2",
+                title: "Day 2: 挑戰之路 - 太宰府與運河城",
+                spots: [
+                    {
+                        id: "s2-1",
+                        name: "太宰府天滿宮",
+                        time: "09:30",
+                        desc: "祈求智慧與學業順利的神社。",
+                        url: "https://maps.app.goo.gl/8ZqxYJxEkDvC9RCH8",
+                        transport: "西鐵電車「太宰府站」步行 5 分鐘",
+                        items: [
+                            { id: "d2-i1", name: "梅枝餅 (Umegae Mochi)", checked: false },
+                            { id: "d2-i2", name: "學業御守", checked: false }
+                        ]
+                    },
+                    {
+                        id: "s2-2",
+                        name: "博多運河城",
+                        time: "14:00",
+                        desc: "大型複合設施,如同迷宮般的購物中心。",
+                        url: "https://maps.app.goo.gl/uZJ8VmhYqN9rKzUJ9",
+                        transport: "地下鐵「中洲川端站」步行 10 分鐘",
+                        items: [
+                            { id: "d2-i3", name: "Jump Shop 限定周邊", checked: false },
+                            { id: "d2-i4", name: "無印良品福岡限定商品", checked: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                day: "day3",
+                title: "Day 3: 海岸線探險 - 糸島",
+                spots: [
+                    {
+                        id: "s3-1",
+                        name: "櫻井二見浦 夫婦岩",
+                        time: "10:30",
+                        desc: "海上的白色鳥居,絕佳的打卡聖地。",
+                        url: "https://maps.app.goo.gl/VbMxqS5yxKEH8pLr7",
+                        transport: "JR 筑肥線「筑前前原站」轉巴士約 30 分鐘",
+                        items: [
+                            { id: "d3-i1", name: "糸島手工海鹽", checked: false },
+                            { id: "d3-i2", name: "夫婦岩明信片", checked: false }
+                        ]
+                    },
+                    {
+                        id: "s3-2",
+                        name: "糸島咖啡廳",
+                        time: "13:00",
+                        desc: "享受悠閒的午後時光。",
+                        url: "https://goo.gl/maps/itoshima",
+                        transport: "自駕或租車遊覽糸島最方便",
+                        items: [
+                            { id: "d3-i3", name: "手工果醬", checked: false },
+                            { id: "d3-i4", name: "糸島布丁", checked: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                day: "day4",
+                title: "Day 4: 購物狂歡 - 天神與唐人町",
+                spots: [
+                    {
+                        id: "s4-1",
+                        name: "天神地下街",
+                        time: "11:00",
+                        desc: "九州最大的地下購物迷宮。",
+                        url: "https://maps.app.goo.gl/yGJKZNxpD6ksNfat5",
+                        transport: "地下鐵「天神站」直達",
+                        items: [
+                            { id: "d4-i1", name: "藥妝 (合利他命、眼藥水)", checked: false },
+                            { id: "d4-i2", name: "BAKE 起司塔", checked: false }
+                        ]
+                    },
+                    {
+                        id: "s4-2",
+                        name: "唐人町商店街",
+                        time: "15:30",
+                        desc: "充滿懷舊風情的在地商店街。",
+                        url: "https://goo.gl/maps/toujinmachi",
+                        transport: "地下鐵「唐人町站」出站即達",
+                        items: [
+                            { id: "d4-i3", name: "日式傳統漬物", checked: false },
+                            { id: "d4-i4", name: "九州甘口醬油", checked: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                day: "day5",
+                title: "Day 5: 返程準備 - 機場最後衝刺",
+                spots: [
+                    {
+                        id: "s5-1",
+                        name: "福岡機場免稅店",
+                        time: "14:00",
+                        desc: "離開前的最後補給站。",
+                        url: "https://goo.gl/maps/fukuoka-airport",
+                        transport: "地下鐵機場線「福岡機場站」",
+                        items: [
+                            { id: "d5-i1", name: "福砂屋長崎蛋糕", checked: false },
+                            { id: "d5-i2", name: "明太子 (冷藏/冷凍)", checked: false },
+                            { id: "d5-i3", name: "Royce 巧克力洋芋片", checked: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // 口袋名單預設資料
+        const defaultWishlist = {
+            day: "wishlist",
+            title: "📌 口袋名單 - 想去的餐廳與景點",
+            spots: [
+                {
+                    id: "w-1",
+                    name: "一蘭拉麵總店",
+                    time: "",
+                    desc: "福岡必吃的經典豚骨拉麵,總店就在這裡!",
+                    url: "https://maps.app.goo.gl/ichiran",
+                    transport: "地下鐵中洲川端站步行5分鐘",
+                    items: []
+                },
+                {
+                    id: "w-2",
+                    name: "大濠公園",
+                    time: "",
+                    desc: "美麗的城市綠洲,適合散步放鬆。",
+                    url: "https://maps.app.goo.gl/ohori",
+                    transport: "地下鐵大濠公園站",
+                    items: []
+                }
+            ]
+        };
+
+        let appData = [];
+        let wishlistData = {};
+        let activeDay = 'day1';
+
+        function init() {
+            loadData();
+            loadWishlist();
+            render();
+            loadStateFromUrl();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('poke_itinerary_data');
+            const raw = saved ? JSON.parse(saved) : defaultItinerary;
+            appData = raw.map(day => ({
+                ...day,
+                spots: day.spots.map(normalizeSpot)
+            }));
+        }
+
+        function loadWishlist() {
+            const saved = localStorage.getItem('poke_wishlist_data');
+            const raw = saved ? JSON.parse(saved) : defaultWishlist;
+            wishlistData = {
+                ...raw,
+                spots: raw.spots.map(normalizeSpot)
+            };
+        }
+
+        function saveData() {
+            localStorage.setItem('poke_itinerary_data', JSON.stringify(appData));
+            render();
+            updateUrlState();
+        }
+
+        function saveWishlist() {
+            localStorage.setItem('poke_wishlist_data', JSON.stringify(wishlistData));
+            render();
+        }
+
+        function resetData() {
+            if (confirm("確定要重置所有資料嗎?這將會刪除您新增的所有行程與項目。")) {
+                localStorage.removeItem('poke_itinerary_data');
+                localStorage.removeItem('poke_wishlist_data');
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.delete('checked');
+                window.history.replaceState({}, '', newUrl);
+                init();
+                alert("✨ 資料已重置!");
+            }
+        }
+
+        function render() {
+        renderTabs();
+        const container = document.getElementById('content-area');
+        container.innerHTML = '';
+
+        if (activeDay === 'wishlist') {
+            renderWishlist(container);
+        } else {
+            appData.forEach(dayData => {
+                if (dayData.day !== activeDay) return;
+
+                const dayDiv = document.createElement('div');
+                dayDiv.id = dayData.day;
+                dayDiv.className = 'day-section active';
+
+                const title = document.createElement('div');
+                title.className = 'day-title';
+                title.contentEditable = true; // 允許編輯
+                title.textContent = dayData.title;
+
+                // 編輯完成後更新 appData
+                title.onblur = (e) => {
+                    dayData.title = e.target.innerText.trim();
+                    saveData();
+                };
+
+                dayDiv.appendChild(title);
+
+                dayData.spots.forEach((spot, spotIndex) => {
+                    renderSpot(dayDiv, dayData, spot, spotIndex, false);
+                });
+
+                const addSpotBtn = document.createElement('button');
+                addSpotBtn.className = 'add-spot-btn';
+                addSpotBtn.textContent = '+ 新增景點';
+                addSpotBtn.onclick = () => addSpot(dayData.day);
+                dayDiv.appendChild(addSpotBtn);
+
+                container.appendChild(dayDiv);
+            });
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('onclick').includes(activeDay)) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+
+        function renderWishlist(container) {
+            const dayDiv = document.createElement('div');
+            dayDiv.id = 'wishlist';
+            dayDiv.className = 'day-section active';
+
+            const title = document.createElement('div');
+            title.className = 'day-title';
+            title.textContent = wishlistData.title;
+            dayDiv.appendChild(title);
+
+            const desc = document.createElement('p');
+            desc.style.color = 'var(--text-light)';
+            desc.style.marginBottom = '20px';
+            desc.textContent = '收集想去但還沒排入行程的餐廳和景點 📝';
+            dayDiv.appendChild(desc);
+
+            wishlistData.spots.forEach((spot, spotIndex) => {
+                renderSpot(dayDiv, wishlistData, spot, spotIndex, true);
+            });
+
+            const addSpotBtn = document.createElement('button');
+            addSpotBtn.className = 'add-spot-btn';
+            addSpotBtn.textContent = '+ 新增口袋名單';
+            addSpotBtn.onclick = () => addWishlistSpot();
+            dayDiv.appendChild(addSpotBtn);
+
+            container.appendChild(dayDiv);
+        }
+
+        function renderSpot(parentDiv, dayData, spot, spotIndex, isWishlist) {
+            const spotCard = document.createElement('div');
+            spotCard.className = 'spot-card';
+
+            const header = document.createElement('div');
+            header.className = 'spot-header';
+
+            const titleGroup = document.createElement('div');
+            titleGroup.className = 'spot-title-group';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.contentEditable = true;
+            nameSpan.textContent = spot.name;
+            nameSpan.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'name') : updateSpot(e.target, dayData.day, spotIndex, 'name');
+            titleGroup.appendChild(nameSpan);
+            header.appendChild(titleGroup);
+
+            // ⏰ 行程才顯示時間（口袋名單不顯示）
+            if (!isWishlist) {
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'spot-time';
+                timeDiv.contentEditable = true;
+                timeDiv.textContent = spot.time || '00:00';
+
+                timeDiv.onblur = (e) => {
+                    updateSpot(e.target, dayData.day, spotIndex, 'time');
+                };
+
+                header.appendChild(timeDiv);
+            }
+
+            if (isWishlist) {
+                const importBtn = document.createElement('button');
+                importBtn.className = 'delete-btn-small';
+                importBtn.innerHTML = '📥';
+                importBtn.title = '加入行程';
+                importBtn.onclick = () => openImportModal(spotIndex);
+                header.appendChild(importBtn);
+            }
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = () => isWishlist ? deleteWishlistSpot(spotIndex) : deleteSpot(dayData.day, spotIndex);
+            header.appendChild(deleteBtn);
+
+            spotCard.appendChild(header);
+
+            const desc = document.createElement('div');
+            desc.className = 'spot-desc';
+            desc.contentEditable = true;
+            desc.textContent = spot.desc;
+            desc.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'desc') : updateSpot(e.target, dayData.day, spotIndex, 'desc');
+            spotCard.appendChild(desc);
+
+            const linkWrap = document.createElement('div');
+            if (spot.url) {
+                const siteDiv = document.createElement('div');
+                siteDiv.className = 'spot-link';
+                siteDiv.innerHTML = `🌐 <a href="${spot.url}" target="_blank">官方網站</a>`;
+                linkWrap.appendChild(siteDiv);
+            }
+
+            if (spot.mapUrl) {
+                const mapDiv = document.createElement('div');
+                mapDiv.className = 'spot-link';
+                mapDiv.innerHTML = `📍 <a href="${spot.mapUrl}" target="_blank">Google Map</a>`;
+                linkWrap.appendChild(mapDiv);
+            }
+
+            spotCard.appendChild(linkWrap);
+
+            if (spot.transport) {
+                const transportDiv = document.createElement('div');
+                transportDiv.className = 'spot-transport';
+
+                const transportContent = document.createElement('div');
+                transportContent.className = 'spot-transport-content';
+                transportContent.contentEditable = true;
+                transportContent.textContent = spot.transport;
+                transportContent.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'transport') : updateSpot(e.target, dayData.day, spotIndex, 'transport');
+
+                transportDiv.innerHTML = '<span>🚇</span>';
+                transportDiv.appendChild(transportContent);
+                spotCard.appendChild(transportDiv);
+            }
+
+            if (spot.items) {
+                const list = document.createElement('ul');
+                list.className = 'shopping-list';
+
+                spot.items.forEach((item, itemIndex) => {
+                    const li = document.createElement('li');
+                    li.className = 'shopping-item';
+                    const deleteBtn = isWishlist
+                    ? `<button class="delete-btn-small"
+                        onclick="deleteWishlistItem(${spotIndex}, ${itemIndex})">×</button>`
+                    : `<button class="delete-btn-small"
+                        onclick="deleteItem('${dayData.day}', ${spotIndex}, ${itemIndex})">×</button>`;
+                    li.innerHTML = `
+                        <div class="checkbox-wrapper">
+                            ${!isWishlist ? `
+                            <input type="checkbox"
+                                ${item.checked ? 'checked' : ''}
+                                onchange="toggleCheck('${dayData.day}', ${spotIndex}, ${itemIndex})">
+                            <div class="custom-checkbox"></div>
+                            ` : ''}
+                        </div>
+                        <span class="item-text" contenteditable="true"
+                            onblur="${isWishlist
+                                ? `updateWishlistItem(this, ${spotIndex}, ${itemIndex})`
+                                : `updateItem(this, '${dayData.day}', ${spotIndex}, ${itemIndex})`}">
+                            ${item.name}
+                        </span>
+                        ${deleteBtn}
+                    `;
+
+                    list.appendChild(li);
+                });
+
+                const addItemBtn = document.createElement('div');
+                addItemBtn.className = 'add-item-btn';
+                addItemBtn.innerHTML = '+ 新增代買項目';
+                addItemBtn.onclick = () => {
+                    if (isWishlist) {
+                        addWishlistItem(spotIndex);
+                    } else {
+                        addItem(dayData.day, spotIndex);
+                    }
+                };
+                list.appendChild(addItemBtn);
+
+                spotCard.appendChild(list);
+            }
+
+            
+
+            parentDiv.appendChild(spotCard);
+        }
+
+        function openTab(dayId) {
+            activeDay = dayId;
+            render();
+        }
+
+        function toggleCheck(dayId, spotIndex, itemIndex) {
+            const day = appData.find(d => d.day === dayId);
+            if (day && day.spots[spotIndex] && day.spots[spotIndex].items[itemIndex]) {
+                day.spots[spotIndex].items[itemIndex].checked = !day.spots[spotIndex].items[itemIndex].checked;
+                saveData();
+            }
+        }
+
+        function updateSpot(element, dayId, spotIndex, field) {
+            const day = appData.find(d => d.day === dayId);
+            if (day && day.spots[spotIndex]) {
+                day.spots[spotIndex][field] = element.innerText.trim();
+                if (field === 'time') {
+                    sortSpotsByTime(day);
+                }
+                saveData();
+            }
+        }
+
+        function updateItem(element, dayId, spotIndex, itemIndex) {
+            const day = appData.find(d => d.day === dayId);
+            if (day && day.spots[spotIndex] && day.spots[spotIndex].items[itemIndex]) {
+                day.spots[spotIndex].items[itemIndex].name = element.innerText;
+                saveData();
+            }
+        }
+
+        function addSpot(dayId) {
+            const day = appData.find(d => d.day === dayId);
+            if (day) {
+                day.spots.push({
+                    id: `s-${Date.now()}`,
+                    name: "新景點",
+                    time: "00:00",
+                    desc: "點擊編輯描述",
+                    url: "https://maps.google.com",
+                    transport: "點擊編輯交通資訊",
+                    items: []
+                });
+                saveData();
+            }
+        }
+
+        function deleteSpot(dayId, spotIndex) {
+            if (confirm("確定要刪除此景點嗎?")) {
+                const day = appData.find(d => d.day === dayId);
+                if (day) {
+                    day.spots.splice(spotIndex, 1);
+                    saveData();
+                }
+            }
+        }
+
+        function addItem(dayId, spotIndex) {
+            const day = appData.find(d => d.day === dayId);
+            if (day && day.spots[spotIndex]) {
+                day.spots[spotIndex].items.push({
+                    id: `i-${Date.now()}`,
+                    name: "新代買項目",
+                    checked: false
+                });
+                saveData();
+            }
+        }
+
+        function deleteItem(dayId, spotIndex, itemIndex) {
+            const day = appData.find(d => d.day === dayId);
+            if (day && day.spots[spotIndex]) {
+                day.spots[spotIndex].items.splice(itemIndex, 1);
+                saveData();
+            }
+        }
+
+        // 口袋名單專用函數
+        function addWishlistSpot() {
+            wishlistData.spots.push({
+                id: `w-${Date.now()}`,
+                name: "新口袋名單",
+                time: "",
+                desc: "點擊編輯描述",
+                url: "https://maps.google.com",
+                transport: "點擊編輯交通資訊",
+                items: []
+            });
+            saveWishlist();
+        }
+
+        function updateWishlistSpot(element, spotIndex, field) {
+            if (wishlistData && wishlistData.spots[spotIndex]) {
+                wishlistData.spots[spotIndex][field] = element.innerText;
+                saveWishlist();
+            }
+        }
+
+        function deleteWishlistSpot(spotIndex) {
+            if (confirm("確定要刪除此口袋名單嗎?")) {
+                if (wishlistData) {
+                    wishlistData.spots.splice(spotIndex, 1);
+                    saveWishlist();
+                }
+            }
+        }
+
+        function updateUrlState() {
+            const checkedIds = [];
+            appData.forEach(day => {
+                day.spots.forEach(spot => {
+                    spot.items.forEach(item => {
+                        if (item.checked) checkedIds.push(item.id);
+                    });
+                });
+            });
+
+            const newUrl = new URL(window.location);
+            if (checkedIds.length > 0) {
+                newUrl.searchParams.set('checked', checkedIds.join(','));
+            } else {
+                newUrl.searchParams.delete('checked');
+            }
+            window.history.replaceState({}, '', newUrl);
+        }
+
+        function loadStateFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const checkedParam = params.get('checked');
+
+            if (checkedParam) {
+                const checkedIds = checkedParam.split(',');
+                let changed = false;
+
+                appData.forEach(day => {
+                    day.spots.forEach(spot => {
+                        spot.items.forEach(item => {
+                            if (checkedIds.includes(item.id)) {
+                                item.checked = true;
+                                changed = true;
+                            }
+                        });
+                    });
+                });
+
+                if (changed) {
+                    saveData();
+                }
+            }
+        }
+
+        function shareStatus() {
+            updateUrlState();
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast();
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                alert("請手動複製網址:\n" + url);
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.className = "show";
+            setTimeout(function () { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function openExportModal() {
+            const modal = document.getElementById('exportModal');
+            const textarea = document.getElementById('exportText');
+            textarea.value = JSON.stringify(appData, null, 4);
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('exportModal').style.display = 'none';
+        }
+
+        function importData() {
+            const textarea = document.getElementById('exportText');
+            try {
+                const newData = JSON.parse(textarea.value);
+                if (Array.isArray(newData)) {
+                    if (confirm("確定要匯入這份資料嗎?這將會覆蓋目前的行程。")) {
+                        appData = newData;
+                        saveData();
+                        closeModal();
+                        alert("✨ 資料匯入成功!");
+                    }
+                } else {
+                    alert("❌ 格式錯誤:必須是陣列 (Array)。");
+                }
+            } catch (e) {
+                alert("❌ JSON 格式錯誤:" + e.message);
+            }
+        }
+
+        window.onclick = function (event) {
+            const exportModal = document.getElementById('exportModal');
+            const importModal = document.getElementById('importModal');
+
+            if (event.target === exportModal) closeModal();
+            if (event.target === importModal) closeImportModal();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+        });
+
+        let pendingImportIndex = null;
+
+        function openImportModal(spotIndex) {
+            const modal = document.getElementById('importModal');
+            const select = document.getElementById('importDaySelect');
+            select.innerHTML = ''; // 清空舊選項
+
+            // 根據目前已有的行程生成選項
+            appData.forEach(day => {
+                const opt = document.createElement('option');
+                opt.value = day.day;
+                opt.textContent = day.title || day.day;
+                select.appendChild(opt);
+            });
+
+            // 儲存當前口袋名單索引
+            modal.dataset.spotIndex = spotIndex;
+            modal.style.display = 'block';
+        }
+
+
+        function closeImportModal() {
+            document.getElementById('importModal').style.display = 'none';
+            pendingImportIndex = null;
+        }
+
+        function confirmImport() {
+        const modal = document.getElementById('importModal');
+        const dayId = document.getElementById('importDaySelect').value;
+        const spotIndex = modal.dataset.spotIndex;
+        const spot = wishlistData.spots[spotIndex];
+
+        const day = appData.find(d => d.day === dayId);
+        if (day) {
+            // 將口袋名單加入該天行程
+            day.spots.push(JSON.parse(JSON.stringify(spot)));
+            saveData();
+            closeImportModal();
+        }
+    }
+
+        function normalizeSpot(spot) {
+            return {
+                id: spot.id || `s-${Date.now()}`,
+                name: spot.name || "未命名景點",
+                time: spot.time || "",
+                desc: spot.desc || "",
+                url: spot.url || "https://example.com",
+                mapUrl: spot.mapUrl || spot.url || "https://maps.google.com",
+                transport: spot.transport || "",
+                items: Array.isArray(spot.items)
+                    ? spot.items.map(i => ({
+                        id: i.id || `i-${Date.now()}`,
+                        name: i.name || "新代買項目",
+                        checked: !!i.checked
+                    }))
+                    : []
+            };
+        }
+
+        function addWishlistItem(spotIndex) {
+            if (wishlistData && wishlistData.spots[spotIndex]) {
+                wishlistData.spots[spotIndex].items.push({
+                    id: `i-${Date.now()}`,
+                    name: "新代買項目",
+                    checked: false
+                });
+                saveWishlist();
+            }
+        }
+
+        function deleteWishlistItem(spotIndex, itemIndex) {
+            if (wishlistData && wishlistData.spots[spotIndex]) {
+                wishlistData.spots[spotIndex].items.splice(itemIndex, 1);
+                saveWishlist();
+            }
+        }
+
+        function sortSpotsByTime(day) {
+            day.spots.sort((a, b) => {
+                if (!a.time) return 1;
+                if (!b.time) return -1;
+                return a.time.localeCompare(b.time);
+            });
+        }
+
+        function addDay() {
+            const nextDayNumber = appData.length + 1;
+            const dayId = `day${nextDayNumber}`;
+
+            appData.push({
+                day: dayId,
+                title: `Day ${nextDayNumber}`,
+                spots: []
+            });
+
+            activeDay = dayId;
+            saveData();
+        }
+
+        function removeLastDay() {
+            if (appData.length <= 1) {
+                alert('至少要有一天行程');
+                return;
+            }
+
+            const removed = appData.pop();
+
+            if (activeDay === removed.day) {
+                activeDay = appData[appData.length - 1].day;
+            }
+
+            saveData();
+        }
+
+
+        function renderTabs() {
+            const tabs = document.getElementById('tabs');
+            tabs.innerHTML = '';
+
+            // 先渲染行程天數
+            appData.forEach(day => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn' + (activeDay === day.day ? ' active' : '');
+                btn.textContent = day.title;
+                btn.title = day.title; // tooltip 顯示完整標題
+                btn.onclick = () => openTab(day.day);
+                tabs.appendChild(btn);
+            });
+
+            // 加入口袋名單 tab
+            const wishlistBtn = document.createElement('button');
+            wishlistBtn.className = 'tab-btn' + (activeDay === 'wishlist' ? ' active' : '');
+            wishlistBtn.textContent = wishlistData.title;
+            wishlistBtn.title = wishlistData.title;
+            wishlistBtn.onclick = () => openTab('wishlist');
+            tabs.appendChild(wishlistBtn);
+        }
+
+
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>
