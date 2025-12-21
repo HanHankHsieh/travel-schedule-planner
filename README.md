@@ -28,12 +28,20 @@
 
 ## 預覽畫面
 
-![行程頁面](https://hanhankhsieh.github.io/travel-schedule-planner/)
+![行程頁面](./assets/travel-schedule-planner.png)
 
+
+<p>
+  <a href="https://hanhankhsieh.github.io/travel-schedule-planner/" 
+     target="_blank" 
+     style="display:inline-block; padding:10px 20px; background:#FFB6C1; color:white; border-radius:8px; text-decoration:none; font-weight:bold;">
+     🔗 前往網站
+  </a>
+</p>
 ---
 
 ## 使用方式
 
 1. **下載或複製專案**  
    ```bash
-   git clone https://github.com/你的帳號/專案名稱.git
+   git clone https://github.com/HanHankHsieh/travel-schedule-planner.git
