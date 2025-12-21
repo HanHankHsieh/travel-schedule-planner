@@ -1228,7 +1228,7 @@
                 itinerary: appData,
                 wishlist: wishlistData
             };
-            exportText.value = JSON.stringify(exportObj, null, 2);
+            exportText.value = JSON.stringify(exportObj);
             document.getElementById('exportModal').style.display = 'block';
         }
 
@@ -1237,10 +1237,30 @@
             document.getElementById('exportModal').style.display = 'none';
         }
 
+        // 將字串中的換行轉成空格
+        function normalizeStrings(obj) {
+            if (typeof obj === 'string') {
+                return obj.replace(/[\r\n]+/g, ' ').trim();
+            } else if (Array.isArray(obj)) {
+                return obj.map(normalizeStrings);
+            } else if (typeof obj === 'object' && obj !== null) {
+                const newObj = {};
+                for (const key in obj) {
+                    newObj[key] = normalizeStrings(obj[key]);
+                }
+                return newObj;
+            } else {
+                return obj;
+            }
+        }
+
         function importData() {
             try {
-                const text = document.getElementById('exportText').value;
+                let text = document.getElementById('exportText').value;
                 if (!text) return alert("請貼上 JSON 資料");
+
+                // 自動清理換行、回車、制表符等控制字元
+                text = text.replace(/[\u0000-\u001F]+/g, ' ');
 
                 const imported = JSON.parse(text);
 
@@ -1270,6 +1290,7 @@
                 alert("❌ 匯入失敗，請確認 JSON 格式正確");
             }
         }
+
 
 
         window.onclick = function (event) {
@@ -1422,12 +1443,6 @@
             wishlistBtn.onclick = () => openTab('wishlist');
             tabs.appendChild(wishlistBtn);
         }
-
-
-
-
-
-
 
     </script>
 
