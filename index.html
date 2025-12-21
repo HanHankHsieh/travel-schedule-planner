@@ -876,6 +876,7 @@
             const spotCard = document.createElement('div');
             spotCard.className = 'spot-card';
 
+            // Header
             const header = document.createElement('div');
             header.className = 'spot-header';
 
@@ -885,24 +886,23 @@
             const nameSpan = document.createElement('span');
             nameSpan.contentEditable = true;
             nameSpan.textContent = spot.name;
-            nameSpan.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'name') : updateSpot(e.target, dayData.day, spotIndex, 'name');
+            nameSpan.onblur = (e) => isWishlist
+                ? updateWishlistSpot(e.target, spotIndex, 'name')
+                : updateSpot(e.target, dayData.day, spotIndex, 'name');
             titleGroup.appendChild(nameSpan);
             header.appendChild(titleGroup);
 
-            // ⏰ 行程才顯示時間（口袋名單不顯示）
+            // 時間欄（行程才有）
             if (!isWishlist) {
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'spot-time';
                 timeDiv.contentEditable = true;
                 timeDiv.textContent = spot.time || '00:00';
-
-                timeDiv.onblur = (e) => {
-                    updateSpot(e.target, dayData.day, spotIndex, 'time');
-                };
-
+                timeDiv.onblur = (e) => updateSpot(e.target, dayData.day, spotIndex, 'time');
                 header.appendChild(timeDiv);
             }
 
+            // 口袋名單「加入行程」按鈕
             if (isWishlist) {
                 const importBtn = document.createElement('button');
                 importBtn.className = 'delete-btn-small';
@@ -912,6 +912,7 @@
                 header.appendChild(importBtn);
             }
 
+            // 刪除按鈕
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.innerHTML = '×';
@@ -920,30 +921,63 @@
 
             spotCard.appendChild(header);
 
+            // 描述
             const desc = document.createElement('div');
             desc.className = 'spot-desc';
             desc.contentEditable = true;
             desc.textContent = spot.desc;
-            desc.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'desc') : updateSpot(e.target, dayData.day, spotIndex, 'desc');
+            desc.onblur = (e) => isWishlist
+                ? updateWishlistSpot(e.target, spotIndex, 'desc')
+                : updateSpot(e.target, dayData.day, spotIndex, 'desc');
             spotCard.appendChild(desc);
 
+            // 網站與 Google Map
             const linkWrap = document.createElement('div');
+            linkWrap.className = 'spot-link-wrap';
+
             if (spot.url) {
                 const siteDiv = document.createElement('div');
                 siteDiv.className = 'spot-link';
-                siteDiv.innerHTML = `🌐 <a href="${spot.url}" target="_blank">官方網站</a>`;
+                const siteSpan = document.createElement('span');
+                siteSpan.contentEditable = true;
+                siteSpan.textContent = spot.url;
+                siteSpan.onblur = (e) => isWishlist
+                    ? updateWishlistSpot(e.target, spotIndex, 'url')
+                    : updateSpot(e.target, dayData.day, spotIndex, 'url');
+
+                const siteBtn = document.createElement('button');
+                siteBtn.textContent = '🔗';
+                siteBtn.onclick = () => window.open(siteSpan.innerText, '_blank');
+
+                siteDiv.appendChild(document.createTextNode('🌐 官方網站: '));
+                siteDiv.appendChild(siteSpan);
+                siteDiv.appendChild(siteBtn);
                 linkWrap.appendChild(siteDiv);
             }
 
             if (spot.mapUrl) {
                 const mapDiv = document.createElement('div');
                 mapDiv.className = 'spot-link';
-                mapDiv.innerHTML = `📍 <a href="${spot.mapUrl}" target="_blank">Google Map</a>`;
+                const mapSpan = document.createElement('span');
+                mapSpan.contentEditable = true;
+                mapSpan.textContent = spot.mapUrl;
+                mapSpan.onblur = (e) => isWishlist
+                    ? updateWishlistSpot(e.target, spotIndex, 'mapUrl')
+                    : updateSpot(e.target, dayData.day, spotIndex, 'mapUrl');
+
+                const mapBtn = document.createElement('button');
+                mapBtn.textContent = '🔗';
+                mapBtn.onclick = () => window.open(mapSpan.innerText, '_blank');
+
+                mapDiv.appendChild(document.createTextNode('📍 Google Map: '));
+                mapDiv.appendChild(mapSpan);
+                mapDiv.appendChild(mapBtn);
                 linkWrap.appendChild(mapDiv);
             }
 
             spotCard.appendChild(linkWrap);
 
+            // 交通資訊
             if (spot.transport) {
                 const transportDiv = document.createElement('div');
                 transportDiv.className = 'spot-transport';
@@ -952,13 +986,16 @@
                 transportContent.className = 'spot-transport-content';
                 transportContent.contentEditable = true;
                 transportContent.textContent = spot.transport;
-                transportContent.onblur = (e) => isWishlist ? updateWishlistSpot(e.target, spotIndex, 'transport') : updateSpot(e.target, dayData.day, spotIndex, 'transport');
+                transportContent.onblur = (e) => isWishlist
+                    ? updateWishlistSpot(e.target, spotIndex, 'transport')
+                    : updateSpot(e.target, dayData.day, spotIndex, 'transport');
 
                 transportDiv.innerHTML = '<span>🚇</span>';
                 transportDiv.appendChild(transportContent);
                 spotCard.appendChild(transportDiv);
             }
 
+            // 代買清單
             if (spot.items) {
                 const list = document.createElement('ul');
                 list.className = 'shopping-list';
@@ -966,24 +1003,20 @@
                 spot.items.forEach((item, itemIndex) => {
                     const li = document.createElement('li');
                     li.className = 'shopping-item';
+
                     const deleteBtn = isWishlist
-                    ? `<button class="delete-btn-small"
-                        onclick="deleteWishlistItem(${spotIndex}, ${itemIndex})">×</button>`
-                    : `<button class="delete-btn-small"
-                        onclick="deleteItem('${dayData.day}', ${spotIndex}, ${itemIndex})">×</button>`;
+                        ? `<button class="delete-btn-small" onclick="deleteWishlistItem(${spotIndex}, ${itemIndex})">×</button>`
+                        : `<button class="delete-btn-small" onclick="deleteItem('${dayData.day}', ${spotIndex}, ${itemIndex})">×</button>`;
+
                     li.innerHTML = `
                         <div class="checkbox-wrapper">
                             ${!isWishlist ? `
-                            <input type="checkbox"
-                                ${item.checked ? 'checked' : ''}
-                                onchange="toggleCheck('${dayData.day}', ${spotIndex}, ${itemIndex})">
-                            <div class="custom-checkbox"></div>
-                            ` : ''}
+                            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleCheck('${dayData.day}', ${spotIndex}, ${itemIndex})">
+                            <div class="custom-checkbox"></div>` : ''}
                         </div>
-                        <span class="item-text" contenteditable="true"
-                            onblur="${isWishlist
-                                ? `updateWishlistItem(this, ${spotIndex}, ${itemIndex})`
-                                : `updateItem(this, '${dayData.day}', ${spotIndex}, ${itemIndex})`}">
+                        <span class="item-text" contenteditable="true" onblur="${isWishlist
+                            ? `updateWishlistItem(this, ${spotIndex}, ${itemIndex})`
+                            : `updateItem(this, '${dayData.day}', ${spotIndex}, ${itemIndex})`}">
                             ${item.name}
                         </span>
                         ${deleteBtn}
@@ -1007,10 +1040,10 @@
                 spotCard.appendChild(list);
             }
 
-            
-
             parentDiv.appendChild(spotCard);
         }
+
+
 
         function openTab(dayId) {
             activeDay = dayId;
