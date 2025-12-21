@@ -28,7 +28,7 @@
 
 ## 預覽畫面
 
-![行程頁面](https://user-images.githubusercontent.com/你的帳號/preview-image.png)
+![行程頁面](https://hanhankhsieh.github.io/travel-schedule-planner/)
 
 ---
 

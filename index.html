@@ -585,7 +585,7 @@
 
     <div class="main-container">
         <header>
-            <h1 id="page-title" contenteditable="true">🌸 福岡五日冒險日誌 🌸</h1>
+            <h1 id="page-title" contenteditable="true">🌸 旅遊行程表 🌸</h1>
         </header>
 
         <nav class="tabs" id="tabs"></nav>
@@ -673,142 +673,53 @@
         const defaultItinerary = [
             {
                 day: "day1",
-                title: "Day 1: 初始之日 - 博多市區與拉麵",
+                title: "Day 1",
                 spots: [
                     {
                         id: "s1-1",
-                        name: "博多車站 (Hakata Station)",
+                        name: "地點",
                         time: "10:00",
-                        desc: "冒險的起點,繁華的交通樞紐。",
-                        url: "https://maps.app.goo.gl/LKQZvyhskXQu3JQg7",
-                        transport: "JR 博多站直達",
+                        desc: "描述",
+                        url: "",
+                        transport: "交通資訊",
                         items: [
-                            { id: "d1-i1", name: "博多通饅頭 (Torimon)", checked: false },
-                            { id: "d1-i2", name: "小雞蛋糕 (Hiyoko)", checked: false }
+                            { id: "d1-i1", name: "必買清單 1", checked: false },
+                            { id: "d1-i2", name: "必買清單 2", checked: false }
                         ]
                     },
                     {
                         id: "s1-2",
-                        name: "拉麵道館 (Ramen Stadium)",
-                        time: "12:30",
-                        desc: "挑戰味蕾的極限,尋找最強拉麵。",
-                        url: "https://maps.app.goo.gl/LKQZvyhskXQu3JQg7",
-                        transport: "位於博多車站內,步行即達",
+                        name: "地點",
+                        time: "12:00",
+                        desc: "描述",
+                        url: "",
+                        transport: "交通資訊",
                         items: [
-                            { id: "d1-i3", name: "名店拉麵調理包", checked: false },
-                            { id: "d1-i4", name: "福岡限定拉麵碗", checked: false }
+                            { id: "d1-i1", name: "必買清單 1", checked: false },
+                            { id: "d1-i2", name: "必買清單 2", checked: false }
                         ]
                     }
                 ]
             },
             {
                 day: "day2",
-                title: "Day 2: 挑戰之路 - 太宰府與運河城",
-                spots: [
-                    {
-                        id: "s2-1",
-                        name: "太宰府天滿宮",
-                        time: "09:30",
-                        desc: "祈求智慧與學業順利的神社。",
-                        url: "https://maps.app.goo.gl/8ZqxYJxEkDvC9RCH8",
-                        transport: "西鐵電車「太宰府站」步行 5 分鐘",
-                        items: [
-                            { id: "d2-i1", name: "梅枝餅 (Umegae Mochi)", checked: false },
-                            { id: "d2-i2", name: "學業御守", checked: false }
-                        ]
-                    },
-                    {
-                        id: "s2-2",
-                        name: "博多運河城",
-                        time: "14:00",
-                        desc: "大型複合設施,如同迷宮般的購物中心。",
-                        url: "https://maps.app.goo.gl/uZJ8VmhYqN9rKzUJ9",
-                        transport: "地下鐵「中洲川端站」步行 10 分鐘",
-                        items: [
-                            { id: "d2-i3", name: "Jump Shop 限定周邊", checked: false },
-                            { id: "d2-i4", name: "無印良品福岡限定商品", checked: false }
-                        ]
-                    }
-                ]
+                title: "Day 2",
+                spots: []
             },
             {
                 day: "day3",
-                title: "Day 3: 海岸線探險 - 糸島",
-                spots: [
-                    {
-                        id: "s3-1",
-                        name: "櫻井二見浦 夫婦岩",
-                        time: "10:30",
-                        desc: "海上的白色鳥居,絕佳的打卡聖地。",
-                        url: "https://maps.app.goo.gl/VbMxqS5yxKEH8pLr7",
-                        transport: "JR 筑肥線「筑前前原站」轉巴士約 30 分鐘",
-                        items: [
-                            { id: "d3-i1", name: "糸島手工海鹽", checked: false },
-                            { id: "d3-i2", name: "夫婦岩明信片", checked: false }
-                        ]
-                    },
-                    {
-                        id: "s3-2",
-                        name: "糸島咖啡廳",
-                        time: "13:00",
-                        desc: "享受悠閒的午後時光。",
-                        url: "https://goo.gl/maps/itoshima",
-                        transport: "自駕或租車遊覽糸島最方便",
-                        items: [
-                            { id: "d3-i3", name: "手工果醬", checked: false },
-                            { id: "d3-i4", name: "糸島布丁", checked: false }
-                        ]
-                    }
-                ]
+                title: "Day 3",
+                spots: []
             },
             {
                 day: "day4",
-                title: "Day 4: 購物狂歡 - 天神與唐人町",
-                spots: [
-                    {
-                        id: "s4-1",
-                        name: "天神地下街",
-                        time: "11:00",
-                        desc: "九州最大的地下購物迷宮。",
-                        url: "https://maps.app.goo.gl/yGJKZNxpD6ksNfat5",
-                        transport: "地下鐵「天神站」直達",
-                        items: [
-                            { id: "d4-i1", name: "藥妝 (合利他命、眼藥水)", checked: false },
-                            { id: "d4-i2", name: "BAKE 起司塔", checked: false }
-                        ]
-                    },
-                    {
-                        id: "s4-2",
-                        name: "唐人町商店街",
-                        time: "15:30",
-                        desc: "充滿懷舊風情的在地商店街。",
-                        url: "https://goo.gl/maps/toujinmachi",
-                        transport: "地下鐵「唐人町站」出站即達",
-                        items: [
-                            { id: "d4-i3", name: "日式傳統漬物", checked: false },
-                            { id: "d4-i4", name: "九州甘口醬油", checked: false }
-                        ]
-                    }
-                ]
+                title: "Day 4",
+                spots: []
             },
             {
                 day: "day5",
-                title: "Day 5: 返程準備 - 機場最後衝刺",
-                spots: [
-                    {
-                        id: "s5-1",
-                        name: "福岡機場免稅店",
-                        time: "14:00",
-                        desc: "離開前的最後補給站。",
-                        url: "https://goo.gl/maps/fukuoka-airport",
-                        transport: "地下鐵機場線「福岡機場站」",
-                        items: [
-                            { id: "d5-i1", name: "福砂屋長崎蛋糕", checked: false },
-                            { id: "d5-i2", name: "明太子 (冷藏/冷凍)", checked: false },
-                            { id: "d5-i3", name: "Royce 巧克力洋芋片", checked: false }
-                        ]
-                    }
-                ]
+                title: "Day 5",
+                spots: []
             }
         ];
 
@@ -819,20 +730,11 @@
             spots: [
                 {
                     id: "w-1",
-                    name: "一蘭拉麵總店",
+                    name: "口袋名單預設",
                     time: "",
-                    desc: "福岡必吃的經典豚骨拉麵,總店就在這裡!",
-                    url: "https://maps.app.goo.gl/ichiran",
-                    transport: "地下鐵中洲川端站步行5分鐘",
-                    items: []
-                },
-                {
-                    id: "w-2",
-                    name: "大濠公園",
-                    time: "",
-                    desc: "美麗的城市綠洲,適合散步放鬆。",
-                    url: "https://maps.app.goo.gl/ohori",
-                    transport: "地下鐵大濠公園站",
+                    desc: "口袋名單描述",
+                    url: "",
+                    transport: "交通資訊",
                     items: []
                 }
             ]
