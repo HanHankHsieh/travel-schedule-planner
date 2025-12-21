@@ -1027,7 +1027,7 @@
 
                 const addItemBtn = document.createElement('div');
                 addItemBtn.className = 'add-item-btn';
-                addItemBtn.innerHTML = '+ 新增代買項目';
+                addItemBtn.innerHTML = '+ 新增待買項目';
                 addItemBtn.onclick = () => {
                     if (isWishlist) {
                         addWishlistItem(spotIndex);
@@ -1077,6 +1077,13 @@
             }
         }
 
+        function updateWishlistItem(element, spotIndex, itemIndex) {
+            if (wishlistData && wishlistData.spots[spotIndex] && wishlistData.spots[spotIndex].items[itemIndex]) {
+                wishlistData.spots[spotIndex].items[itemIndex].name = element.innerText.trim();
+                saveWishlist();  // ✅ 同樣更新
+            }
+        }
+
         function addSpot(dayId) {
             const day = appData.find(d => d.day === dayId);
             if (day) {
@@ -1108,7 +1115,7 @@
             if (day && day.spots[spotIndex]) {
                 day.spots[spotIndex].items.push({
                     id: `i-${Date.now()}`,
-                    name: "新代買項目",
+                    name: "新待買項目",
                     checked: false
                 });
                 saveData();
@@ -1304,19 +1311,19 @@
         }
 
         function confirmImport() {
-        const modal = document.getElementById('importModal');
-        const dayId = document.getElementById('importDaySelect').value;
-        const spotIndex = modal.dataset.spotIndex;
-        const spot = wishlistData.spots[spotIndex];
+            const modal = document.getElementById('importModal');
+            const dayId = document.getElementById('importDaySelect').value;
+            const spotIndex = modal.dataset.spotIndex;
+            const spot = wishlistData.spots[spotIndex];
 
-        const day = appData.find(d => d.day === dayId);
-        if (day) {
-            // 將口袋名單加入該天行程
-            day.spots.push(JSON.parse(JSON.stringify(spot)));
-            saveData();
-            closeImportModal();
+            const day = appData.find(d => d.day === dayId);
+            if (day) {
+                // 將口袋名單加入該天行程
+                day.spots.push(JSON.parse(JSON.stringify(spot)));
+                saveData();
+                closeImportModal();
+            }
         }
-    }
 
         function normalizeSpot(spot) {
             return {
@@ -1330,7 +1337,7 @@
                 items: Array.isArray(spot.items)
                     ? spot.items.map(i => ({
                         id: i.id || `i-${Date.now()}`,
-                        name: i.name || "新代買項目",
+                        name: i.name || "新待買項目",
                         checked: !!i.checked
                     }))
                     : []
@@ -1341,7 +1348,7 @@
             if (wishlistData && wishlistData.spots[spotIndex]) {
                 wishlistData.spots[spotIndex].items.push({
                     id: `i-${Date.now()}`,
-                    name: "新代買項目",
+                    name: "新待買項目",
                     checked: false
                 });
                 saveWishlist();
