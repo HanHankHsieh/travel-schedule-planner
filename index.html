@@ -69,9 +69,10 @@
 			border: 1px solid transparent; 
 			cursor: pointer; 
 			color: var(--accent-blue); 
-			white-space: nowrap; 
+			white-space: nowrap; /* 確保名稱不會換行 */
 			font-weight: bold; 
 			transition: 0.3s;
+			flex-shrink: 0; /* 防止標籤被擠壓 */
 		}
 
 		.tab.active { 
@@ -334,37 +335,39 @@
     }
 
     function renderTabs() {
-        var container = document.getElementById('tabs-section');
-        container.innerHTML = '';
-        if (state.view !== 'itinerary') { container.classList.add('hidden'); return; }
-        container.classList.remove('hidden');
-        
-        for (var i = 0; i < state.itinerary.length; i++) {
-            (function(idx){
-                var btn = document.createElement('button');
-                btn.className = (idx === state.dayIdx) ? 'tab active' : 'tab';
-                btn.innerText = state.itinerary[idx].title;
-                btn.onclick = function() { state.dayIdx = idx; render(); };
-                container.appendChild(btn);
-            })(i);
-        }
-        var addDay = document.createElement('button');
-        addDay.className = 'tab';
-        addDay.innerText = '+';
-        addDay.onclick = function() {
-            state.itinerary.push({ title: 'Day ' + (state.itinerary.length + 1), spots: [] });
-            state.dayIdx = state.itinerary.length - 1;
-            render();
-        };
-        container.appendChild(addDay);
-    }
+		var container = document.getElementById('tabs-section');
+		container.innerHTML = '';
+		if (state.view !== 'itinerary') { container.classList.add('hidden'); return; }
+		container.classList.remove('hidden');
+		
+		for (var i = 0; i < state.itinerary.length; i++) {
+			(function(idx){
+				var btn = document.createElement('button');
+				btn.className = (idx === state.dayIdx) ? 'tab active' : 'tab';
+				btn.innerText = state.itinerary[idx].title;
+				btn.onclick = function() { state.dayIdx = idx; render(); };
+				container.appendChild(btn);
+			})(i);
+		}
+		
+		var addDay = document.createElement('button');
+		addDay.className = 'tab';
+		addDay.innerText = '+';
+		addDay.style.border = "1px dashed var(--accent-blue)";
+		addDay.onclick = function() {
+			state.itinerary.push({ title: 'Day ' + (state.itinerary.length + 1), spots: [] });
+			state.dayIdx = state.itinerary.length - 1;
+			render();
+		};
+		container.appendChild(addDay);
+	}
 
     function renderContent() {
 		var main = document.getElementById('main-content');
 		main.innerHTML = '';
 		var view = state.view;
 
-		// 1. 先處理標題
+		// 1. 標題處理
 		var headerTitle = '';
 		if (view === 'itinerary') headerTitle = '🌸 旅遊行程';
 		else if (view === 'flight') headerTitle = '✈️ 機票資訊';
@@ -373,37 +376,76 @@
 		else if (view === 'expense') headerTitle = '💰 結算中心';
 		document.getElementById('app-header').innerText = headerTitle;
 
-		// 2. 判斷是否為記帳頁面 (特殊處理)
 		if (view === 'expense') {
-			renderExpensePage(); // 呼叫記帳專用的渲染函式
-			return; // 結束渲染，不執行下方的卡片迴圈
+			renderExpensePage();
+			return;
 		}
 
-		// 3. 處理一般卡片資料的獲取
-		var data = [];
+		// 2. 行程視圖特有的：頂部管理列 (編輯名稱與刪除)
+		// 修改 renderContent 裡面的這段：
 		if (view === 'itinerary') {
-			data = state.itinerary[state.dayIdx].spots;
-		} else if (view === 'wishlist') {
-			data = state.wishlist;
-		} else if (view === 'flight') {
-			data = state.flights;
-		} else if (view === 'hotel') {
-			data = state.hotels;
+			var dayControl = document.createElement('div');
+			dayControl.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 5px;";
+			
+			// 左側：顯示名稱與編輯按鈕
+			var leftSide = document.createElement('div');
+			// 使用 cssText 就不會出錯！
+			leftSide.style.cssText = "display:flex; align-items:center; gap:8px;"; 
+			leftSide.innerHTML = '<span style="font-size:1rem; font-weight:bold; color:var(--deep-blue);">' + state.itinerary[state.dayIdx].title + '</span>' +
+								 '<button onclick="editDayTitle('+state.dayIdx+')" style="background:none; border:none; cursor:pointer; font-size:1rem; color:var(--accent-blue); padding:0;">✏️</button>';
+			
+			// 右側：刪除按鈕
+			var rightSide = document.createElement('div');
+			if (state.itinerary.length > 1) {
+				rightSide.innerHTML = '<button onclick="handleDeleteDay('+state.dayIdx+')" style="background:none; border:1px solid #ff4d4f; color:#ff4d4f; padding:4px 10px; border-radius:6px; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:4px;">' +
+									  '🗑️ 刪除這天</button>';
+			}
+
+			dayControl.appendChild(leftSide);
+			dayControl.appendChild(rightSide);
+			main.appendChild(dayControl);
 		}
 
-		// 4. 渲染卡片
+		// 3. 資料獲取與卡片渲染
+		var data = (view === 'itinerary') ? state.itinerary[state.dayIdx].spots : 
+				   (view === 'wishlist') ? state.wishlist : 
+				   (view === 'flight') ? state.flights : state.hotels;
+
 		for (var i = 0; i < data.length; i++) {
-			if (view === 'flight') {
-				main.appendChild(createFlightCard(data[i], i));
-			} else if (view === 'hotel') {
-				main.appendChild(createHotelCard(data[i], i));
-			} else {
-				// 行程與願望清單共用此卡片格式
-				main.appendChild(createSpotCard(data[i], i, view === 'wishlist'));
-			}
+			if (view === 'flight') main.appendChild(createFlightCard(data[i], i));
+			else if (view === 'hotel') main.appendChild(createHotelCard(data[i], i));
+			else main.appendChild(createSpotCard(data[i], i, view === 'wishlist'));
+		}
+
+		// 如果當天沒行程，顯示一個溫馨提示
+		if (data.length === 0 && view === 'itinerary') {
+			var emptyHint = document.createElement('div');
+			emptyHint.style.cssText = "text-align:center; padding:40px 20px; color:#ccc; border:2px dashed #eee; border-radius:15px; margin-top:10px;";
+			emptyHint.innerHTML = '📅 這天還沒有行程喔<br><span style="font-size:0.8rem;">點擊右下角 + 開始新增</span>';
+			main.appendChild(emptyHint);
 		}
 	}
+	
+	function handleDeleteDay(idx) {
+		if (confirm('確定要刪除整個「' + state.itinerary[idx].title + '」嗎？\n內容刪掉後就無法找回喔！')) {
+			state.itinerary.splice(idx, 1);
+			
+			// 重新排序 Day 標題
+			for (var i = 0; i < state.itinerary.length; i++) {
+				state.itinerary[i].title = 'Day ' + (i + 1);
+			}
 
+			// 調整當前檢視的 index (防止溢出)
+			if (state.dayIdx >= state.itinerary.length) {
+				state.dayIdx = state.itinerary.length - 1;
+			} else if (state.dayIdx > 0) {
+				state.dayIdx = state.dayIdx - 1; // 刪除後跳轉到前一天，體驗較好
+			}
+			
+			save();
+			render();
+		}
+	}
     // --- 卡片生成 (含刪除按鈕) ---
     function createSpotCard(spot, index, isWish) {
 		var div = document.createElement('div');
@@ -809,6 +851,17 @@
 			state.companions.splice(index, 1);
 			save();
 			render();
+		}
+	}
+	
+	function editDayTitle(idx) {
+		var oldTitle = state.itinerary[idx].title;
+		var newTitle = prompt("請輸入這一天的名稱（例如：Day 1 東京）：", oldTitle);
+		
+		if (newTitle !== null && newTitle.trim() !== "") {
+			state.itinerary[idx].title = newTitle.trim();
+			save();
+			render(); // 重新渲染 Tabs 與內容區
 		}
 	}
     render();
