@@ -591,11 +591,19 @@
 		// 存本地備份
 		localStorage.setItem(DB_REF, JSON.stringify(state));
 		
+
+		// 2. 判斷是否為預設路徑
+		if (DB_REF === 'travel_planner_default') {
+			console.log("📝 目前為預設模式，資料僅儲存於本地瀏覽器。");
+			return; // 直接結束，不執行下方的雲端同步邏輯
+		}
 		// 存雲端
 		clearTimeout(timeout);
 		timeout = setTimeout(() => {
-			db.ref(DB_REF).set(state).catch(e => console.error("雲端同步失敗:", e));
-		}, 2000);
+        db.ref(DB_REF).set(state)
+            .then(() => console.log(`☁️ 雲端同步成功: ${DB_REF}`))
+            .catch(e => console.error("雲端同步失敗:", e));
+    	}, 2000);
 	}
 
     function render() {
