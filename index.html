@@ -38,7 +38,7 @@
 			margin: 0 auto; 
 		}
 
-		/* 標頭改為藍色漸層 */
+		/* 標頭藍色漸層 */
 		header { 
 			background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); 
 			color: white; 
@@ -52,14 +52,15 @@
 			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 		}
 
-		/* 標籤頁樣式調整 */
+		/* 標籤頁樣式 */
 		.tabs-container { 
 			display: flex; 
 			overflow-x: auto; 
 			background: white; 
-			padding: 12px; 
+			padding: 15px 12px 10px 12px; 
 			border-bottom: 1px solid #edf2f7; 
-			gap: 10px; 
+			gap: 12px; 
+			align-items: center;
 		}
 
 		.tab { 
@@ -69,10 +70,10 @@
 			border: 1px solid transparent; 
 			cursor: pointer; 
 			color: var(--accent-blue); 
-			white-space: nowrap; /* 確保名稱不會換行 */
+			white-space: nowrap; 
 			font-weight: bold; 
 			transition: 0.3s;
-			flex-shrink: 0; /* 防止標籤被擠壓 */
+			flex-shrink: 0; 
 		}
 
 		.tab.active { 
@@ -110,10 +111,10 @@
 			font-weight: bold; 
 		}
 
-		/* 卡片設計優化 */
+		/* 卡片設計與連結樣式 */
 		.content { padding: 15px; }
 
-		.spot-card, .hotel-card, .flight-card { 
+		.spot-card, .hotel-card { 
 			position: relative; 
 			border-radius: 15px; 
 			padding: 18px; 
@@ -125,11 +126,42 @@
 
 		.spot-card { border-left: 6px solid var(--primary-blue); }
 		.hotel-card { border-left: 6px solid var(--hotel-blue); }
-		.flight-card { background: var(--flight-navy); color: white; border: none; }
+
+		/* 機票卡片 - 登機證風樣式 */
+		.flight-card { 
+			background: linear-gradient(135deg, var(--flight-navy), var(--deep-blue)); 
+			color: white; 
+			border-radius: 18px; 
+			padding: 20px; 
+			margin-bottom: 16px; 
+			box-shadow: 0 6px 15px rgba(26, 42, 108, 0.2);
+			position: relative;
+			border: none;
+		}
 
 		.card-title { font-size: 1.15rem; font-weight: bold; margin-bottom: 6px; color: var(--deep-blue); }
 		.flight-card .card-title { color: white; }
 		.card-time { color: var(--accent-blue); font-weight: 800; font-size: 1.2rem; }
+
+		/* 連結按鈕樣式 */
+		.card-link {
+			text-decoration: none;
+			font-size: 0.85rem;
+			color: var(--accent-blue);
+			background: var(--light-blue);
+			padding: 4px 10px;
+			border-radius: 6px;
+			font-weight: bold;
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			transition: 0.2s;
+		}
+
+		.card-link:hover {
+			background: var(--primary-blue);
+			color: white;
+		}
 
 		.card-actions { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; }
 		.card-actions button { 
@@ -163,42 +195,9 @@
 			border-radius: 24px; 
 			max-height: 85vh; 
 			overflow-y: auto; 
-			box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
 		}
 
-		.modal-header { 
-			font-size: 1.4rem; 
-			font-weight: bold; 
-			margin-bottom: 20px; 
-			color: var(--accent-blue); 
-			border-bottom: 2px solid var(--light-blue); 
-			padding-bottom: 10px; 
-		}
-
-		/* 表單元素 */
-		.form-group { margin-bottom: 18px; }
-		.form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #4a5568; font-size: 0.95rem; }
-		.form-group input, .form-group select, .form-group textarea { 
-			width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 1rem; background: #fdfdfd;
-		}
-
-		/* 記帳與分攤標籤樣式 */
-		.companion-tag {
-			display: inline-block;
-			background: var(--light-blue);
-			color: var(--accent-blue);
-			padding: 6px 14px;
-			border-radius: 20px;
-			margin-right: 8px;
-			margin-bottom: 8px;
-			font-size: 0.9rem;
-			font-weight: bold;
-			border: 1px solid var(--primary-blue);
-		}
-
-		.sharer-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
-		.ex-sharer { display: none; } /* 隱藏 checkbox */
-
+		/* 記帳選取區塊 (點亮邏輯) */
 		.sharer-label {
 			padding: 8px 16px;
 			background: #f1f5f9;
@@ -209,6 +208,7 @@
 			transition: 0.2s;
 			border: 1px solid #e2e8f0;
 			user-select: none;
+			display: inline-block;
 		}
 
 		.sharer-label:has(input:checked) {
@@ -218,31 +218,7 @@
 			box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3);
 		}
 
-		.expense-edit-item {
-			background: #fff;
-			border: 1px solid #edf2f7;
-			padding: 15px;
-			border-radius: 15px;
-			margin-bottom: 15px;
-			position: relative;
-			box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-		}
-
-		/* 結算頁面專用 */
-		.expense-summary-card {
-			background: #fff;
-			padding: 20px;
-			border-radius: 18px;
-			box-shadow: var(--shadow);
-			margin-bottom: 20px;
-		}
-
-		.balance-row {
-			display: flex;
-			justify-content: space-between;
-			padding: 14px 0;
-			border-bottom: 1px solid #f7fafc;
-		}
+		.ex-sharer { display: none; }
 
 		.fab { 
 			position: fixed; 
@@ -260,7 +236,175 @@
 			z-index: 90; 
 		}
 
-		.hidden { display: none; }
+		.hidden { 
+			display: none !important; 
+		}
+
+		/* 讓表單內的欄位可以並排 */
+			.form-row {
+				display: flex;
+				gap: 12px; /* 欄位之間的間距 */
+				margin-bottom: 0;
+			}
+
+			.form-row .form-group {
+				flex: 1; /* 讓並排的欄位等寬 */
+			}
+
+			/* 針對新增支出/項目的按鈕美化 */
+			.btn-add {
+				background: var(--light-blue);
+				color: var(--accent-blue);
+				border: 1px dashed var(--accent-blue);
+				width: 100%;
+				padding: 10px;
+				border-radius: 10px;
+				cursor: pointer;
+				font-weight: bold;
+				margin-top: 5px;
+				transition: 0.3s;
+			}
+
+			.btn-add:hover {
+				background: var(--accent-blue);
+				color: white;
+			}
+			/* 表單組間距與標籤樣式 */
+			.form-group { 
+				margin-bottom: 22px; /* 增加每個項目的上下呼吸感 */
+			}
+
+			.form-group label { 
+				display: block; 
+				margin-bottom: 8px; 
+				font-weight: 600; 
+				color: var(--deep-blue); 
+				font-size: 0.9rem;
+				letter-spacing: 0.5px;
+			}
+
+			/* 輸入框美化：去掉生硬邊框，增加陰影與圓角 */
+			.form-group input, 
+			.form-group select, 
+			.form-group textarea { 
+				width: 100%; 
+				padding: 12px 16px; 
+				border: 1.5px solid #eef2f7; 
+				border-radius: 14px; 
+				font-size: 1rem; 
+				background: #fdfdfd;
+				color: var(--text-main);
+				transition: all 0.3s ease;
+				outline: none;
+				box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+			}
+
+			/* 當點擊輸入框時的動畫效果 */
+			.form-group input:focus, 
+			.form-group select:focus, 
+			.form-group textarea:focus { 
+				border-color: var(--accent-blue);
+				background: white;
+				box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1); /* 淡淡的發光感 */
+				transform: translateY(-1px); /* 微幅上升感 */
+			}
+
+			/* 表單並排列的間距調整 */
+			.form-row {
+				display: flex;
+				gap: 15px; /* 增加左右並排的間距 */
+				margin-bottom: 0;
+			}
+
+			/* 旅伴管理標籤美化 */
+			#companion-list {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-bottom: 15px;
+			}
+
+			.companion-tag {
+				display: flex;
+				align-items: center;
+				background: var(--light-blue);
+				color: var(--deep-blue);
+				padding: 6px 12px 6px 14px;
+				border-radius: 50px; /* 膠囊狀 */
+				font-weight: 600;
+				font-size: 0.9rem;
+				border: 1px solid var(--primary-blue);
+				transition: 0.2s;
+			}
+
+			.companion-tag:hover {
+				background: #fff;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			}
+
+			.remove-btn {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 20px;
+				height: 20px;
+				background: rgba(255, 77, 77, 0.1);
+				color: #ff4d4d;
+				border-radius: 50%;
+				margin-left: 8px;
+				cursor: pointer;
+				font-size: 12px;
+				transition: 0.2s;
+			}
+
+			.remove-btn:hover {
+				background: #ff4d4d;
+				color: white;
+			}
+
+			/* 結算統計行優化 */
+			.balance-card-row {
+				display: flex;
+				align-items: center;
+				padding: 16px;
+				background: #fdfdfd;
+				border: 1px solid #f0f4f8;
+				border-radius: 14px;
+				margin-bottom: 12px;
+				transition: 0.3s;
+			}
+
+			.balance-card-row:hover {
+				transform: scale(1.01);
+				border-color: var(--primary-blue);
+			}
+
+			.balance-name {
+				flex: 1;
+				font-weight: bold;
+				color: var(--deep-blue);
+				font-size: 1.05rem;
+			}
+
+			.balance-amount {
+				text-align: right;
+				font-family: 'Monaco', 'Consolas', monospace; /* 金額對齊更好看 */
+			}
+
+			.status-label {
+				font-size: 0.75rem;
+				padding: 2px 8px;
+				border-radius: 4px;
+				margin-right: 10px;
+				font-weight: bold;
+			}
+			/* 確保預設是顯示的，且使用 flex 讓內部的「+」號居中 */
+			.fab { 
+				display: flex; 
+				align-items: center; 
+				justify-content: center;
+				/* ... 你原本的其他樣式 ... */
+			}
     </style>
 </head>
 <body>
@@ -271,11 +415,12 @@
     <main id="main-content" class="content"></main>
     
     <nav class="bottom-nav">
-        <button class="nav-item active" id="nav-itinerary" onclick="switchView('itinerary')"><span>📅</span><span style="font-size: 11px">行程</span></button>
-        <button class="nav-item" id="nav-flight" onclick="switchView('flight')"><span>✈️</span><span style="font-size: 11px">機票</span></button>
-        <button class="nav-item" id="nav-hotel" onclick="switchView('hotel')"><span>🏨</span><span style="font-size: 11px">飯店</span></button>
-        <button class="nav-item" id="nav-wishlist" onclick="switchView('wishlist')"><span>✨</span><span style="font-size: 11px">願望</span></button>
-        <button class="nav-item" id="nav-expense" onclick="switchView('expense')"><span>💰</span><span style="font-size: 11px">記帳</span></button>
+        <button class="nav-item active" id="nav-itinerary" onclick="switchView('itinerary')"><span style="font-size:1.2rem;">📅</span><span style="font-size:0.7rem;">行程</span></button>
+        <button class="nav-item" id="nav-flight" onclick="switchView('flight')"><span style="font-size:1.2rem;">✈️</span><span style="font-size:0.7rem;">機票</span></button>
+        <button class="nav-item" id="nav-hotel" onclick="switchView('hotel')"><span style="font-size:1.2rem;">🏨</span><span style="font-size:0.7rem;">飯店</span></button>
+        <button class="nav-item" id="nav-wishlist" onclick="switchView('wishlist')"><span style="font-size:1.2rem;">✨</span><span style="font-size:0.7rem;">願望</span></button>
+        <button class="nav-item" id="nav-expense" onclick="switchView('expense')"><span style="font-size:1.2rem;">💰</span><span style="font-size:0.7rem;">記帳</span></button>
+		<button class="nav-item" id="nav-admin" onclick="switchView('admin')"><span style="font-size:1.2rem;">⚙️</span><span style="font-size:0.7rem;">管理</span></button>
     </nav>
     <button class="fab" onclick="openDynamicModal()">+</button>
 </div>
@@ -285,7 +430,7 @@
 </div>
 
 <script>
-    var DB_KEY = 'travel_planner_v11';
+    var DB_KEY = 'travel_planner_v12';
     
     // 1. 嘗試從本地讀取
     var savedData = localStorage.getItem(DB_KEY);
@@ -296,29 +441,209 @@
     } else {
         // 2. 如果是第一次打開，填入範例預設資料
         state = {
-            view: 'itinerary',
-            dayIdx: 0,
-            itinerary: [
-                { 
-                    title: "Day 1", 
-                    spots: [
-                        { name: "東京鐵塔", time: "10:00", note: "記得拍照", expenses: [], checklist: [] },
-                        { name: "築地市場", time: "12:30", note: "吃壽司", expenses: [], checklist: [] }
-                    ] 
-                },
-                { title: "Day 2", spots: [] }
-            ],
-            flights: [
-                { airline: "長榮航空", flightNo: "BR198", from: "TPE", to: "NRT", depTime: "08:50" }
-            ],
-            hotels: [
-                { name: "東京希爾頓飯店", checkIn: "2024-05-20", note: "已付清" }
-            ],
-            wishlist: [
-                { name: "淺草寺大燈籠", note: "買御守" }
-            ],
-            companions: ['我', '小明']
-        };
+			"view": "itinerary",
+			"dayIdx": 0,
+			"itinerary": [
+				{
+				"title": "2/28 Day 1：啟程與新宿探險",
+				"spots": [
+					{
+					"name": "抵達 NRT 與 Skyliner 接駁",
+					"time": "13:30",
+					"map": "https://maps.app.goo.gl/narita",
+					"link": "https://www.keisei.co.jp/keisei/tetudou/skyliner/tc/",
+					"note": "換取實體票並購買西瓜卡",
+					"expenses": [
+						{
+						"item": "Skyliner 票券",
+						"amount": 2570,
+						"currency": "JPY",
+						"paidBy": "我",
+						"sharedWith": [
+							"我",
+							"小明"
+						]
+						}
+					],
+					"checklist": [
+						{
+						"text": "領取網卡",
+						"completed": true
+						},
+						{
+						"text": "儲值 Suica",
+						"completed": false
+						}
+					]
+					},
+					{
+					"name": "新宿哥吉拉飯店 Check-in",
+					"time": "16:00",
+					"map": "https://maps.app.goo.gl/shinjuku",
+					"link": "",
+					"note": "飯店位於歌舞伎町旁",
+					"expenses": [],
+					"checklist": []
+					}
+				]
+				},
+				{
+				"title": "3/01 Day 2：淺草文化與晴空塔",
+				"spots": [
+					{
+					"name": "雷門淺草寺",
+					"time": "10:00",
+					"map": "https://maps.app.goo.gl/asakusa",
+					"link": "https://www.senso-ji.jp/",
+					"note": "抽籤與購買御守",
+					"expenses": [
+						{
+						"item": "吉列炸肉餅",
+						"amount": 500,
+						"currency": "JPY",
+						"paidBy": "小明",
+						"sharedWith": [
+							"我",
+							"小明"
+						]
+						}
+					],
+					"checklist": [
+						{
+						"text": "拍大燈籠照",
+						"completed": false
+						}
+					]
+					},
+					{
+					"name": "晴空塔展望台",
+					"time": "17:00",
+					"map": "https://maps.app.goo.gl/skytree",
+					"link": "https://www.tokyo-skytree.jp/",
+					"note": "看夕陽與夜景",
+					"expenses": [
+						{
+						"item": "門票 (兩人)",
+						"amount": 6000,
+						"currency": "JPY",
+						"paidBy": "我",
+						"sharedWith": [
+							"我",
+							"小明"
+						]
+						}
+					],
+					"checklist": [
+						{
+						"text": "寶可夢中心購物",
+						"completed": false
+						}
+					]
+					}
+				]
+				},
+				{
+				"title": "3/02 Day 3：河口湖一日遊",
+				"spots": [
+					{
+					"name": "富士急行巴士往河口湖",
+					"time": "08:00",
+					"map": "https://maps.app.goo.gl/kawaguchiko",
+					"link": "",
+					"note": "新宿南口搭車",
+					"expenses": [
+						{
+						"item": "來回巴士票",
+						"amount": 4000,
+						"currency": "JPY",
+						"paidBy": "小明",
+						"sharedWith": [
+							"我",
+							"小明"
+						]
+						}
+					],
+					"checklist": [
+						{
+						"text": "確認天氣預報",
+						"completed": true
+						}
+					]
+					}
+				]
+				},
+				{
+				"title": "3/03 Day 4：最後採買與返家",
+				"spots": [
+					{
+					"name": "唐吉訶德 新宿總店",
+					"time": "10:00",
+					"map": "https://maps.app.goo.gl/donki",
+					"link": "",
+					"note": "採買零食與藥妝",
+					"expenses": [
+						{
+						"item": "幫家人買維他命",
+						"amount": 8000,
+						"currency": "JPY",
+						"paidBy": "我",
+						"sharedWith": [
+							"我"
+						]
+						}
+					],
+					"checklist": [
+						{
+						"text": "確認免稅優惠券",
+						"completed": true
+						}
+					]
+					}
+				]
+				}
+			],
+			"flights": [
+				{
+				"airline": "長榮航空",
+				"flightNo": "BR198",
+				"from": "TPE",
+				"to": "NRT",
+				"depTime": "08:50"
+				},
+				{
+				"airline": "長榮航空",
+				"flightNo": "BR197",
+				"from": "NRT",
+				"to": "TPE",
+				"depTime": "14:15"
+				}
+			],
+			"hotels": [
+				{
+				"name": "新宿格拉斯麗飯店 (Hotel Gracery)",
+				"checkIn": "2024-02-28",
+				"map": "https://maps.app.goo.gl/gracery",
+				"link": "BK-12345678",
+				"note": "高樓層景觀房，有哥吉拉頭"
+				}
+			],
+			"wishlist": [
+				{
+				"name": "藍瓶咖啡 限定杯",
+				"note": "代購目標"
+				},
+				{
+				"name": "炸牛排 Motomura",
+				"note": "排隊美食"
+				}
+			],
+			"companions": [
+				"我",
+				"小明"
+			],
+			"isImporting": false,
+			"editTarget": null
+			};
     }
 
     // 確保運行時狀態正確
@@ -374,10 +699,15 @@
 		else if (view === 'hotel') headerTitle = '🏨 飯店住宿';
 		else if (view === 'wishlist') headerTitle = '✨ 願望清單';
 		else if (view === 'expense') headerTitle = '💰 結算中心';
+		else if (view === 'admin') headerTitle = '⚙️ 管理介面';
 		document.getElementById('app-header').innerText = headerTitle;
 
 		if (view === 'expense') {
 			renderExpensePage();
+			return;
+		}
+		if (view === 'admin') {
+			renderAdminPage();
 			return;
 		}
 
@@ -451,7 +781,20 @@
 		var div = document.createElement('div');
 		div.className = 'spot-card';
 		
-		// 生成待買清單預覽 (含勾選邏輯)
+		// 1. 生成連結按鈕 (Google Map & 官網)
+		var linkHTML = '';
+		if (spot.map || spot.link) {
+			linkHTML += '<div style="margin-top:8px; display:flex; gap:10px;">';
+			if (spot.map) {
+				linkHTML += '<a href="' + spot.map + '" target="_blank" style="text-decoration:none; font-size:0.8rem; color:var(--accent-blue); display:flex; align-items:center; gap:3px;">📍 地圖導航</a>';
+			}
+			if (spot.link) {
+				linkHTML += '<a href="' + spot.link + '" target="_blank" style="text-decoration:none; font-size:0.8rem; color:var(--accent-blue); display:flex; align-items:center; gap:3px;">🔗 官方網站</a>';
+			}
+			linkHTML += '</div>';
+		}
+
+		// 2. 生成待買清單預覽
 		var ckHTML = '';
 		if (spot.checklist && spot.checklist.length > 0) {
 			ckHTML += '<div style="margin-top:10px; border-top:1px dashed #eee; padding-top:8px;">';
@@ -459,15 +802,14 @@
 				var item = spot.checklist[j];
 				var isChecked = item.completed ? 'checked' : '';
 				var textStyle = item.completed ? 'text-decoration:line-through; color:#ccc;' : '';
-				// 這裡直接綁定 onclick 方便快速勾選
 				ckHTML += '<div style="font-size:0.85rem; display:flex; align-items:center; margin-bottom:3px;">' +
-						  '<input type="checkbox" ' + isChecked + ' onclick="toggleCheckItem('+index+','+j+','+isWish+')"> ' +
-						  '<span style="'+textStyle+'">' + item.text + '</span></div>';
+						'<input type="checkbox" ' + isChecked + ' onclick="toggleCheckItem('+index+','+j+','+isWish+')"> ' +
+						'<span style="'+textStyle+'">' + item.text + '</span></div>';
 			}
 			ckHTML += '</div>';
 		}
 
-		// 生成支出預覽
+		// 3. 生成支出預覽
 		var exHTML = '';
 		if (spot.expenses && spot.expenses.length > 0) {
 			var total = 0;
@@ -475,10 +817,13 @@
 			exHTML = '<div style="font-size:0.8rem; color:var(--accent-blue); font-weight:bold; margin-top:5px;">💰 共計: ' + Math.round(total) + ' (點擊編輯查看明細)</div>';
 		}
 
+		// 4. 組合最終 HTML
 		div.innerHTML = '<div class="card-time">' + (spot.time || '--:--') + '</div>' +
 						'<div class="card-title">' + spot.name + '</div>' +
-						'<div style="font-size:0.85rem; color:#777;">' + (spot.note || '') + '</div>' +
-						ckHTML + exHTML +
+						'<div style="font-size:0.85rem; color:#777; line-height:1.4;">' + (spot.note || '') + '</div>' +
+						linkHTML +  // 插入地圖與連結按鈕
+						ckHTML + 
+						exHTML +
 						'<div class="card-actions">' +
 						(isWish ? '<button onclick="state.isImporting=true; openDynamicModal('+index+')">📅匯入</button>' : '') +
 						'<button onclick="state.isImporting=false; openDynamicModal('+index+')">✏️</button>' +
@@ -496,72 +841,147 @@
 	}
 
     function createFlightCard(f, i) {
-        var div = document.createElement('div');
-        div.className = 'flight-card';
-        div.innerHTML = '<div style="font-weight:bold; font-size:1.2rem;">' + (f.airline || '航空公司') + ' ' + (f.flightNo || '') + '</div>' +
-                        '<div>' + (f.from || '---') + ' ✈️ ' + (f.to || '---') + '</div>' +
-                        '<div style="font-size:0.8rem; opacity:0.8;">' + (f.depTime || '') + '</div>' +
-                        '<div class="card-actions">' +
-                        '<button onclick="openDynamicModal('+i+')">✏️</button>' +
-                        '<button onclick="handleDeleteFlight('+i+')">🗑️</button>' +
-                        '</div>';
-        return div;
-    }
+		var div = document.createElement('div');
+		div.className = 'flight-card';
+		
+		// 內部 HTML 結構優化：區分為 標頭(航班號)、主體(機場與飛機)、底部(時間與按鈕)
+		div.innerHTML = 
+			// 1. 航班資訊標頭
+			'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed rgba(255,255,255,0.2); padding-bottom:10px;">' +
+				'<span style="font-weight:bold; font-size:0.9rem; letter-spacing:1px; color:var(--primary-blue);">' + (f.airline || '航空公司') + '</span>' +
+				'<span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:6px; font-size:0.75rem;">' + (f.flightNo || '航班號') + '</span>' +
+			'</div>' +
+			
+			// 2. 出發 ✈️ 抵達 (左右大字佈局)
+			'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">' +
+				'<div style="text-align:left;">' +
+					'<div style="font-size:1.6rem; font-weight:bold; color:#fff;">' + (f.from || '---') + '</div>' +
+					'<div style="font-size:0.7rem; opacity:0.6;">DEPARTURE</div>' +
+				'</div>' +
+				'<div style="flex:1; text-align:center; position:relative; display:flex; align-items:center; justify-content:center; padding:0 15px;">' +
+					'<div style="width:100%; border-top:1px dashed rgba(255,255,255,0.3); position:absolute; top:50%;"></div>' +
+					'<span style="background:var(--flight-navy); z-index:1; padding:0 8px; font-size:1.2rem;">✈️</span>' +
+				'</div>' +
+				'<div style="text-align:right;">' +
+					'<div style="font-size:1.6rem; font-weight:bold; color:#fff;">' + (f.to || '---') + '</div>' +
+					'<div style="font-size:0.7rem; opacity:0.6;">ARRIVAL</div>' +
+				'</div>' +
+			'</div>' +
+
+			// 3. 底部：起飛時間與操作按鈕
+			'<div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:15px;">' +
+				'<div>' +
+					'<div style="font-size:0.9rem; color:var(--primary-blue); font-weight:bold;">' + (f.depTime || '--:--') + '</div>' +
+					'<div style="font-size:0.75rem; opacity:0.6;">SCHEDULED</div>' +
+				'</div>' +
+				'<div class="card-actions" style="position:static; display:flex; gap:8px;">' +
+					'<button onclick="openDynamicModal('+i+')" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:6px 10px; border-radius:8px; cursor:pointer;">✏️</button>' +
+					'<button onclick="handleDeleteFlight('+i+')" style="background:rgba(255,255,255,0.15); border:none; color:white; padding:6px 10px; border-radius:8px; cursor:pointer;">🗑️</button>' +
+				'</div>' +
+			'</div>';
+			
+		return div;
+	}
 
     function createHotelCard(h, i) {
-        var div = document.createElement('div');
-        div.className = 'hotel-card';
-        div.innerHTML = '<div class="card-title">' + (h.name || '飯店名稱') + '</div>' +
-                        '<div style="font-size:0.85rem; color:#666;">入住: ' + (h.checkIn || '未填寫') + '</div>' +
-                        '<div class="card-actions">' +
-                        '<button onclick="openDynamicModal('+i+')">✏️</button>' +
-                        '<button onclick="handleDeleteHotel('+i+')">🗑️</button>' +
-                        '</div>';
-        return div;
-    }
+		var div = document.createElement('div');
+		div.className = 'hotel-card';
+		
+		// 建立外部連結的 HTML (如果有填寫的話)
+		var mapHtml = h.map ? 
+			'<a href="' + h.map + '" target="_blank" class="card-link">📍 地圖導航</a>' : '';
+		var linkHtml = h.link ? 
+			'<div style="font-size:0.85rem; color:var(--accent-blue); margin-top:8px; word-break:break-all;">' +
+			'🔑 訂房資訊: <span style="font-weight:bold;">' + h.link + '</span></div>' : '';
+
+		div.innerHTML = 
+			// 標題與操作按鈕
+			'<div style="margin-right: 60px;">' +
+				'<div class="card-title" style="font-size:1.2rem; margin-bottom:4px;">🏨 ' + (h.name || '飯店名稱') + '</div>' +
+				'<div style="font-size:0.85rem; color:var(--text-main); opacity:0.8;">📅 入住日期: ' + (h.checkIn || '未填寫') + '</div>' +
+			'</div>' +
+			
+			// 飯店備註 (如有填寫才顯示)
+			(h.note ? '<div style="margin-top:10px; font-size:0.85rem; color:#718096; background:#f7fafc; padding:8px; border-radius:8px;">' + h.note + '</div>' : '') +
+			
+			// 連結區域
+			'<div style="margin-top:12px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">' +
+				mapHtml +
+				linkHtml +
+			'</div>' +
+
+			// 操作按鈕
+			'<div class="card-actions">' +
+				'<button onclick="openDynamicModal('+i+')">✏️</button>' +
+				'<button onclick="handleDeleteHotel('+i+')">🗑️</button>' +
+			'</div>';
+			
+		return div;
+	}
 
     // --- Modal 邏輯 ---
     function openDynamicModal(index) {
-        var idx = (index !== undefined) ? index : null;
-        var container = document.getElementById('modal-body');
-        state.editTarget = (idx !== null) ? { index: idx, view: state.view } : null;
-        
-        var html = '<div class="modal-header">' + (idx !== null ? '✏️ 編輯' : '➕ 新增') + '</div>';
+		var idx = (index !== undefined) ? index : null;
+		var container = document.getElementById('modal-body');
+		state.editTarget = (idx !== null) ? { index: idx, view: state.view } : null;
+		
+		// 標題與風格統一
+		var title = (idx !== null ? '✏️ 編輯項目' : '➕ 新增項目');
+		var html = '<div class="modal-header" style="color:var(--deep-blue); border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; margin-bottom: 20px;">' + title + '</div>';
 
-        if (state.view === 'flight') {
-            html += '<div class="form-group"><label>航空公司</label><input type="text" id="fl-airline"></div>' +
-                    '<div class="form-row"><div class="form-group"><label>航班號碼</label><input type="text" id="fl-no"></div><div class="form-group"><label>日期時間</label><input type="text" id="fl-time"></div></div>' +
-                    '<div class="form-row"><div class="form-group"><label>出發地</label><input type="text" id="fl-from"></div><div class="form-group"><label>目的地</label><input type="text" id="fl-to"></div></div>' +
-                    '<div class="form-row"><div class="form-group"><label>航廈/登機門</label><input type="text" id="fl-gate"></div><div class="form-group"><label>座位號碼</label><input type="text" id="fl-seat"></div></div>';
-        } else if (state.view === 'hotel') {
-            html += '<div class="form-group"><label>飯店名稱 *</label><input type="text" id="ht-name"></div>' +
-                    '<div class="form-group"><label>入住日期</label><input type="date" id="ht-checkin"></div>' +
-                    '<div class="form-group"><label>Google Map 連結</label><input type="url" id="ht-map"></div>' +
-                    '<div class="form-group"><label>訂房確認碼/連結</label><input type="text" id="ht-link"></div>' +
-                    '<div class="form-group"><label>備註</label><textarea id="ht-note"></textarea></div>';
-        } else {
-            // 景點 / 願望
-            html += '<div class="form-group"><label>名稱 *</label><input type="text" id="f-name"></div>' +
-                    '<div class="form-row"><div class="form-group"><label>時間</label><input type="time" id="f-time"></div><div class="form-group"><label>地圖連結</label><input type="url" id="f-map"></div></div>' +
-                    '<div class="form-group"><label>外部連結</label><input type="url" id="f-link"></div>' +
-                    '<div class="form-group"><label>💰 記帳明細</label><div id="m-expense-list"></div><button class="btn-add" onclick="addExRow()">+ 新增支出</button></div>' +
-                    '<div class="form-group"><label>🛍️ 待買清單</label><div id="m-check-list"></div><button class="btn-add" onclick="addCkRow()">+ 新增項目</button></div>' +
-                    '<div class="form-group"><label>備註</label><textarea id="f-note"></textarea></div>';
-            if (state.isImporting) {
-                html += '<div class="form-group" style="background:#fff0f3; padding:10px; border-radius:8px;"><label>📅 匯入至哪一天？</label><select id="f-target-day">';
-                for (var i=0; i<state.itinerary.length; i++) html += '<option value="'+i+'">'+state.itinerary[i].title+'</option>';
-                html += '</select></div>';
-            }
-        }
+		if (state.view === 'flight') {
+			html += '<div class="form-group"><label>航空公司</label><input type="text" id="fl-airline" placeholder="例如：長榮航空"></div>' +
+					'<div class="form-row">' +
+						'<div class="form-group"><label>航班號碼</label><input type="text" id="fl-no" placeholder="BR198"></div>' +
+						'<div class="form-group"><label>時間</label><input type="text" id="fl-time" placeholder="12/23 08:30"></div>' +
+					'</div>' +
+					'<div class="form-row">' +
+						'<div class="form-group"><label>出發地</label><input type="text" id="fl-from" placeholder="TPE"></div>' +
+						'<div class="form-group"><label>目的地</label><input type="text" id="fl-to" placeholder="NRT"></div>' +
+					'</div>' +
+					'<div class="form-row">' +
+						'<div class="form-group"><label>航廈/登機門</label><input type="text" id="fl-gate"></div>' +
+						'<div class="form-group"><label>座位號碼</label><input type="text" id="fl-seat"></div>' +
+					'</div>';
+		} else if (state.view === 'hotel') {
+			html += '<div class="form-group"><label>飯店名稱 *</label><input type="text" id="ht-name"></div>' +
+					'<div class="form-group"><label>入住日期</label><input type="date" id="ht-checkin"></div>' +
+					'<div class="form-group"><label>Google Map 連結</label><input type="url" id="ht-map" placeholder="貼上地圖連結"></div>' +
+					'<div class="form-group"><label>訂房確認碼/官網連結</label><input type="text" id="ht-link"></div>' +
+					'<div class="form-group"><label>備註</label><textarea id="ht-note" rows="3" style="resize:none;"></textarea></div>';
+		} else {
+			// 景點 / 願望清單
+			html += '<div class="form-group"><label>名稱 *</label><input type="text" id="f-name"></div>' +
+					'<div class="form-row">' +
+						'<div class="form-group" style="flex: 0.4;"><label>時間</label><input type="time" id="f-time"></div>' +
+						'<div class="form-group" style="flex: 0.6;"><label>地圖連結</label><input type="url" id="f-map" placeholder="📍 Google Map"></div>' +
+					'</div>' +
+					'<div class="form-group"><label>官方網站/連結</label><input type="url" id="f-link" placeholder="🔗 網站連結"></div>' +
+					'<div class="form-group"><label>💰 記帳明細</label><div id="m-expense-list"></div><button class="btn-add" onclick="addExRow()">+ 新增支出項目</button></div>' +
+					'<div class="form-group"><label>🛍️ 待買清單</label><div id="m-check-list"></div><button class="btn-add" onclick="addCkRow()">+ 新增勾選項目</button></div>' +
+					'<div class="form-group"><label>備註</label><textarea id="f-note" rows="2" style="resize:none;"></textarea></div>';
+			
+			if (state.isImporting) {
+				html += '<div style="margin-top: 15px; padding: 15px; background: var(--light-blue); border-radius: 12px; border: 1px solid var(--primary-blue);">' +
+						'<label style="display:block; margin-bottom:8px; font-weight:bold; color:var(--deep-blue);">📅 匯入至哪一天？</label>' +
+						'<select id="f-target-day" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--primary-blue);">';
+				for (var i=0; i<state.itinerary.length; i++) {
+					html += '<option value="'+i+'">'+state.itinerary[i].title+'</option>';
+				}
+				html += '</select></div>';
+			}
+		}
 
-        html += '<div style="display:flex; gap:10px; margin-top:20px;">' +
-                '<button style="flex:1; padding:12px; border:none; border-radius:8px; cursor:pointer;" onclick="closeModal()">取消</button>' +
-                '<button style="flex:2; padding:12px; border:none; border-radius:8px; background:var(--accent-blue); color:white; font-weight:bold; cursor:pointer;" onclick="handleDynamicSave()">儲存資料</button></div>';
+		// 底部按鈕區塊
+		html += '<div style="display:flex; gap:12px; margin-top:25px;">' +
+				'<button style="flex:1; padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; color:var(--text-main); font-weight:bold; cursor:pointer;" onclick="closeModal()">取消</button>' +
+				'<button style="flex:1.5; padding:12px; border:none; border-radius:12px; background:var(--accent-blue); color:white; font-weight:bold; cursor:pointer; box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);" onclick="handleDynamicSave()">儲存資料</button>' +
+				'</div>';
 
-        container.innerHTML = html;
-        if (idx !== null) fillData(state.view, idx);
-        document.getElementById('edit-modal').style.display = 'flex';
-    }
+		container.innerHTML = html;
+		if (idx !== null) fillData(state.view, idx);
+		document.getElementById('edit-modal').style.display = 'flex';
+	}
 
     function addExRow(data) {
 		var container = document.getElementById('m-expense-list');
@@ -733,7 +1153,21 @@
     }
 
     function closeModal() { document.getElementById('edit-modal').style.display = 'none'; }
-    function switchView(v) { state.view = v; render(); }
+    function switchView(v) {
+    	state.view = v;
+		render();
+		
+		// 取得右下角的加號按鈕 (FAB)
+		var fab = document.querySelector('.fab');
+		if (fab) {
+			// 如果是記帳頁面 (expense)，就隱藏；否則顯示
+			if (v === 'expense' || v === 'admin') {
+				fab.classList.add('hidden');
+			} else {
+				fab.classList.remove('hidden');
+			}
+		}
+	}
     function updateNav() {
         var items = document.querySelectorAll('.nav-item');
         items.forEach(function(n){ n.classList.remove('active'); });
@@ -748,87 +1182,66 @@
 	function renderExpensePage() {
 		var main = document.getElementById('main-content');
 		var html = '<div class="expense-summary-card">' +
-				   '<h4 style="margin-top:0">👥 旅伴管理</h4>' +
-				   '<div id="companion-list">';
+				'<h4 style="margin-top:0; color:var(--deep-blue); display:flex; align-items:center; gap:8px;">👥 旅伴管理</h4>' +
+				'<div id="companion-list">';
 		
 		for (var i = 0; i < state.companions.length; i++) {
-			html += '<span class="companion-tag">' + state.companions[i] + 
-					' <small onclick="removeCompanion(' + i + ')" style="cursor:pointer; color:#ff4d4d; margin-left:5px">✕</small></span>';
+			html += '<div class="companion-tag">' + state.companions[i] + 
+					'<span class="remove-btn" onclick="removeCompanion(' + i + ')">✕</span></div>';
 		}
 		
 		html += '</div>' +
-				'<div style="display:flex; gap:8px; margin-top:10px">' +
-				'<input type="text" id="new-companion" placeholder="輸入旅伴姓名" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd">' +
-				'<button onclick="addCompanion()" style="background:var(--accent-blue); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold">新增</button>' +
+				'<div style="display:flex; gap:10px; margin-top:15px; background:var(--bg-gray); padding:10px; border-radius:12px;">' +
+				'<input type="text" id="new-companion" placeholder="輸入旅伴姓名" style="flex:1; border:none; background:transparent; outline:none; font-size:0.95rem;">' +
+				'<button onclick="addCompanion()" style="background:var(--accent-blue); color:white; border:none; padding:8px 18px; border-radius:10px; cursor:pointer; font-weight:bold; box-shadow: 0 4px 10px rgba(79, 172, 254, 0.3);">＋ 新增旅伴</button>' +
 				'</div></div>';
 
-		// 1. 初始化所有人的錢包為 0
+		// (計算邏輯保持不變，略過...)
 		var balances = {}; 
-		for (var k = 0; k < state.companions.length; k++) {
-			balances[state.companions[k]] = 0;
-		}
+		for (var k = 0; k < state.companions.length; k++) balances[state.companions[k]] = 0;
 		
-		// 2. 建立一個統一的計算函式，確保邏輯一致
 		function processExpense(ex) {
 			if (!ex || !ex.amount) return;
 			var amount = parseFloat(ex.amount) || 0;
 			var payer = ex.paidBy;
 			var sharers = (ex.sharedWith && ex.sharedWith.length > 0) ? ex.sharedWith : state.companions;
-
-			// 付款者先拿回他墊的所有錢
-			if (balances[payer] !== undefined) {
-				balances[payer] += amount;
-			}
-
-			// 應分攤的人（包含付款者自己，如果他在名單內）要把錢扣掉
+			if (balances[payer] !== undefined) balances[payer] += amount;
 			var perPerson = amount / sharers.length;
 			for (var x = 0; x < sharers.length; x++) {
 				var sName = sharers[x];
-				if (balances[sName] !== undefined) {
-					balances[sName] -= perPerson;
-				}
+				if (balances[sName] !== undefined) balances[sName] -= perPerson;
 			}
 		}
 
-		// 3. 收集所有地方的支出 (行程、飯店、機票)
-		// 行程中的支出
-		state.itinerary.forEach(function(day) {
-			day.spots.forEach(function(spot) {
-				if (spot.expenses) spot.expenses.forEach(processExpense);
-			});
-		});
-
-		// 願望清單中的支出 (如果有算入的話)
-		state.wishlist.forEach(function(item) {
-			if (item.expenses) item.expenses.forEach(processExpense);
-		});
-
-		// 飯店支出
-		state.hotels.forEach(function(hotel) {
-			if (hotel.expenses) hotel.expenses.forEach(processExpense);
-		});
-
-		// 機票支出
-		state.flights.forEach(function(flight) {
-			if (flight.expenses) flight.expenses.forEach(processExpense);
-		});
+		state.itinerary.forEach(day => day.spots.forEach(spot => spot.expenses && spot.expenses.forEach(processExpense)));
+		state.wishlist.forEach(item => item.expenses && item.expenses.forEach(processExpense));
+		state.hotels.forEach(hotel => hotel.expenses && hotel.expenses.forEach(processExpense));
+		state.flights.forEach(flight => flight.expenses && flight.expenses.forEach(processExpense));
 
 		html += '<div class="expense-summary-card">' +
-				'<h4 style="margin-bottom:10px">💰 結算統計 (基準幣值)</h4>' +
-				'<p style="font-size:0.8rem; color:#888; margin-bottom:15px">說明：正數代表墊錢應收回，負數代表欠錢應給出。</p>';
+				'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">' +
+					'<h4 style="margin:0; color:var(--deep-blue);">💰 結算統計</h4>' +
+					'<span style="font-size:0.8rem; color:#999;">單位：基準幣值</span>' +
+				'</div>';
 
 		state.companions.forEach(function(name) {
-			var bal = Math.round(balances[name] * 100) / 100; // 保留兩位小數
-			var color = bal >= 0 ? '#2e7d32' : '#d32f2f';
-			var prefix = bal > 0 ? '+' : '';
+			var bal = Math.round(balances[name] * 100) / 100;
+			var isPositive = bal >= 0;
+			var color = isPositive ? '#2e7d32' : '#d32f2f';
+			var bgColor = isPositive ? '#e8f5e9' : '#ffebee';
+			var statusText = isPositive ? '應收回' : '應給出';
+			var prefix = isPositive ? '+' : '';
 			
-			html += '<div class="balance-row">' +
-					'<span>' + name + '</span>' +
-					'<span style="color:' + color + '; font-weight:bold">' + prefix + bal + '</span>' +
+			html += '<div class="balance-card-row">' +
+						'<span class="status-label" style="background:' + bgColor + '; color:' + color + ';">' + statusText + '</span>' +
+						'<span class="balance-name">' + name + '</span>' +
+						'<div class="balance-amount">' +
+							'<div style="color:' + color + '; font-weight:800; font-size:1.2rem;">' + prefix + bal.toLocaleString() + '</div>' +
+						'</div>' +
 					'</div>';
 		});
 		
-		html += '</div>';
+		html += '<p style="font-size:0.75rem; color:#bbb; text-align:center; margin-top:15px;">※ 統計包含行程、飯店、機票及願望清單之所有支出</p></div>';
 		main.innerHTML = html;
 	}
 
@@ -862,6 +1275,82 @@
 			state.itinerary[idx].title = newTitle.trim();
 			save();
 			render(); // 重新渲染 Tabs 與內容區
+		}
+	}
+
+	function renderAdminPage() {
+		var main = document.getElementById('main-content');
+		var html = `
+			<div class="content">
+				<div class="expense-summary-card" style="border-top: 5px solid var(--accent-blue);">
+					<h3 style="margin-top:0;">⚙️ 管理者模式</h3>
+					<p style="font-size:0.85rem; color:#666;">您可以透過下方區塊備份或批次修改全站資料。</p>
+					
+					<div class="form-group">
+						<label>📊 全域資料 JSON (State)</label>
+						<textarea id="admin-json-area" 
+							style="width:100%; height:350px; font-family:monospace; font-size:0.8rem; padding:12px; border-radius:12px; border:1px solid #e2e8f0; background:#f8fafc; line-height:1.4;"
+						>${JSON.stringify(state, null, 2)}</textarea>
+					</div>
+
+					<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+						<button onclick="copyAdminJSON()" style="padding:12px; background:white; border:1.5px solid var(--accent-blue); color:var(--accent-blue); border-radius:12px; font-weight:bold; cursor:pointer;">📋 複製備份</button>
+						<button onclick="applyAdminJSON()" style="padding:12px; background:var(--accent-blue); border:none; color:white; border-radius:12px; font-weight:bold; cursor:pointer; box-shadow: var(--shadow);">💾 寫入資料</button>
+					</div>
+					
+					<hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+					
+					<h4 style="color:#d32f2f;">危險區域</h4>
+					<button onclick="clearAllData()" style="width:100%; padding:10px; background:#fff5f5; border:1px solid #feb2b2; color:#c53030; border-radius:10px; cursor:pointer; font-size:0.85rem;">🗑️ 清空所有本地資料</button>
+				</div>
+			</div>
+		`;
+		main.innerHTML = html;
+	}
+
+	// 輔助函式：套用 JSON
+	function applyAdminJSON() {
+		const jsonStr = document.getElementById('admin-json-area').value;
+		try {
+			const parsed = JSON.parse(jsonStr);
+			state = parsed;
+			// 同步到 LocalStorage
+			localStorage.setItem('travel_app_data', JSON.stringify(state));
+			alert('✅ 資料已成功更新！');
+			render(); 
+		} catch (e) {
+			alert('❌ JSON 格式錯誤，請檢查符號是否成對。\n' + e.message);
+		}
+	}
+
+	// 輔助函式：複製 JSON
+	function copyAdminJSON() {
+		const area = document.getElementById('admin-json-area');
+		area.select();
+		document.execCommand('copy');
+		alert('📋 已複製到剪貼簿');
+	}
+
+	function clearAllData() {
+		// 設定你想要的 PIN 碼
+		const SECRET_PIN = "8888"; 
+		
+		// 第一層確認：基本防誤觸
+		if (!confirm('⚠️ 警告：這將永久刪除目前瀏覽器存儲的所有行程與記帳，確定要繼續嗎？')) {
+			return;
+		}
+
+		// 第二層確認：輸入 PIN 碼
+		const userPin = prompt("🔐 請輸入管理員 PIN 碼以執行清空動作：");
+
+		if (userPin === null) return; // 使用者按取消
+
+		if (userPin === SECRET_PIN) {
+			localStorage.clear();
+			alert('🗑️ 所有本地資料已成功清除。網頁即將重置。');
+			location.reload(); 
+		} else {
+			alert('❌ PIN 碼錯誤，操作已取消。');
 		}
 	}
     render();
