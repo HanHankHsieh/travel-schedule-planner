@@ -428,174 +428,98 @@
 <div id="edit-modal" class="modal">
     <div class="modal-content" id="modal-body"></div>
 </div>
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-    var DB_KEY = 'travel_planner_v12';
-    
-    // 1. 嘗試從本地讀取
-    var savedData = localStorage.getItem(DB_KEY);
-    var state;
 
-    if (savedData) {
-        state = JSON.parse(savedData);
-    } else {
-        // 2. 如果是第一次打開，填入範例預設資料
-        state = {
+	// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+	const firebaseConfig = {
+		apiKey: "AIzaSyCHN4CC9UfqJQmjr01qlDigsbCuPGIqM_8",
+		authDomain: "travel-planner-7f8db.firebaseapp.com",
+		databaseURL: "https://travel-planner-7f8db-default-rtdb.firebaseio.com",
+		projectId: "travel-planner-7f8db",
+		storageBucket: "travel-planner-7f8db.firebasestorage.app",
+		messagingSenderId: "7573524182",
+		appId: "1:7573524182:web:04dd9dc4795b53a0bcc377",
+		measurementId: "G-82KJWQY5RM"
+	};
+
+	// 初始化 Firebase
+	firebase.initializeApp(firebaseConfig);
+	const db = firebase.database();
+	// 取得網址參數中的 'id'
+	const urlParams = new URLSearchParams(window.location.search);
+	const tripId = urlParams.get('id');
+	// 如果網址有 ?id=xxx，就用 xxx 當名稱；否則預設用 'travel_planner_default'
+	const DB_REF = tripId ? `travel_planner_${tripId}` : 'travel_planner_default';
+
+	var state; // 先定義，但不給值
+
+
+	// --- 2. 修改讀取邏輯：從 Firebase 抓取資料 ---
+	// 3. 修改後的初始化函式
+	function initApp() {
+		const mainContent = document.getElementById('main-content');
+		
+		// 1. 先從 Firebase 抓資料
+		db.ref(DB_REF).once('value').then((snapshot) => {
+			const data = snapshot.val();
+			
+			// 2. 確定抓到資料後，才賦值給 state
+			if (data) {
+				state = data;
+			} else {
+				// 如果雲端沒資料，給予初始範本
+				state = getDefaultState();
+			}
+
+			// 3. ✨ 重要：確定 state 有值了，才能設定屬性
+			state.isImporting = false; 
+
+			// 4. 最後才執行渲染
+			render(); 
+
+		}).catch(error => {
+			console.error("讀取失敗:", error);
+		});
+	}
+
+
+	// 將你原本的大區塊 state 物件封裝成 function，方便 initApp 呼叫
+	function getDefaultState() {
+		return {
 			"view": "itinerary",
 			"dayIdx": 0,
 			"itinerary": [
 				{
-				"title": "2/28 Day 1：啟程與新宿探險",
+				"title": "範例日期 Day 1：行程標題",
 				"spots": [
 					{
-					"name": "抵達 NRT 與 Skyliner 接駁",
-					"time": "13:30",
-					"map": "https://maps.app.goo.gl/narita",
-					"link": "https://www.keisei.co.jp/keisei/tetudou/skyliner/tc/",
-					"note": "換取實體票並購買西瓜卡",
+					"name": "景點 A",
+					"time": "10:00",
+					"map": "http://maps.google.com/example1",
+					"link": "http://example.com/A",
+					"note": "備註說明文字",
 					"expenses": [
 						{
-						"item": "Skyliner 票券",
-						"amount": 2570,
+						"item": "支出項目 X",
+						"amount": 1000,
 						"currency": "JPY",
-						"paidBy": "我",
+						"paidBy": "旅伴 A",
 						"sharedWith": [
-							"我",
-							"小明"
+							"旅伴 A",
+							"旅伴 B"
 						]
 						}
 					],
 					"checklist": [
 						{
-						"text": "領取網卡",
+						"text": "待辦事項 1",
 						"completed": true
 						},
 						{
-						"text": "儲值 Suica",
+						"text": "待辦事項 2",
 						"completed": false
-						}
-					]
-					},
-					{
-					"name": "新宿哥吉拉飯店 Check-in",
-					"time": "16:00",
-					"map": "https://maps.app.goo.gl/shinjuku",
-					"link": "",
-					"note": "飯店位於歌舞伎町旁",
-					"expenses": [],
-					"checklist": []
-					}
-				]
-				},
-				{
-				"title": "3/01 Day 2：淺草文化與晴空塔",
-				"spots": [
-					{
-					"name": "雷門淺草寺",
-					"time": "10:00",
-					"map": "https://maps.app.goo.gl/asakusa",
-					"link": "https://www.senso-ji.jp/",
-					"note": "抽籤與購買御守",
-					"expenses": [
-						{
-						"item": "吉列炸肉餅",
-						"amount": 500,
-						"currency": "JPY",
-						"paidBy": "小明",
-						"sharedWith": [
-							"我",
-							"小明"
-						]
-						}
-					],
-					"checklist": [
-						{
-						"text": "拍大燈籠照",
-						"completed": false
-						}
-					]
-					},
-					{
-					"name": "晴空塔展望台",
-					"time": "17:00",
-					"map": "https://maps.app.goo.gl/skytree",
-					"link": "https://www.tokyo-skytree.jp/",
-					"note": "看夕陽與夜景",
-					"expenses": [
-						{
-						"item": "門票 (兩人)",
-						"amount": 6000,
-						"currency": "JPY",
-						"paidBy": "我",
-						"sharedWith": [
-							"我",
-							"小明"
-						]
-						}
-					],
-					"checklist": [
-						{
-						"text": "寶可夢中心購物",
-						"completed": false
-						}
-					]
-					}
-				]
-				},
-				{
-				"title": "3/02 Day 3：河口湖一日遊",
-				"spots": [
-					{
-					"name": "富士急行巴士往河口湖",
-					"time": "08:00",
-					"map": "https://maps.app.goo.gl/kawaguchiko",
-					"link": "",
-					"note": "新宿南口搭車",
-					"expenses": [
-						{
-						"item": "來回巴士票",
-						"amount": 4000,
-						"currency": "JPY",
-						"paidBy": "小明",
-						"sharedWith": [
-							"我",
-							"小明"
-						]
-						}
-					],
-					"checklist": [
-						{
-						"text": "確認天氣預報",
-						"completed": true
-						}
-					]
-					}
-				]
-				},
-				{
-				"title": "3/03 Day 4：最後採買與返家",
-				"spots": [
-					{
-					"name": "唐吉訶德 新宿總店",
-					"time": "10:00",
-					"map": "https://maps.app.goo.gl/donki",
-					"link": "",
-					"note": "採買零食與藥妝",
-					"expenses": [
-						{
-						"item": "幫家人買維他命",
-						"amount": 8000,
-						"currency": "JPY",
-						"paidBy": "我",
-						"sharedWith": [
-							"我"
-						]
-						}
-					],
-					"checklist": [
-						{
-						"text": "確認免稅優惠券",
-						"completed": true
 						}
 					]
 					}
@@ -604,53 +528,75 @@
 			],
 			"flights": [
 				{
-				"airline": "長榮航空",
-				"flightNo": "BR198",
-				"from": "TPE",
-				"to": "NRT",
-				"depTime": "08:50"
-				},
-				{
-				"airline": "長榮航空",
-				"flightNo": "BR197",
-				"from": "NRT",
-				"to": "TPE",
-				"depTime": "14:15"
+				"airline": "航空公司名稱",
+				"flightNo": "航班編號",
+				"from": "出發地",
+				"to": "目的地",
+				"depTime": "00:00"
 				}
 			],
 			"hotels": [
 				{
-				"name": "新宿格拉斯麗飯店 (Hotel Gracery)",
-				"checkIn": "2024-02-28",
-				"map": "https://maps.app.goo.gl/gracery",
-				"link": "BK-12345678",
-				"note": "高樓層景觀房，有哥吉拉頭"
+				"name": "飯店名稱",
+				"checkIn": "YYYY-MM-DD",
+				"map": "http://maps.google.com/hotel",
+				"link": "預約代碼或連結",
+				"note": "飯店相關備註"
 				}
 			],
 			"wishlist": [
 				{
-				"name": "藍瓶咖啡 限定杯",
-				"note": "代購目標"
-				},
-				{
-				"name": "炸牛排 Motomura",
-				"note": "排隊美食"
+				"name": "願望清單地點/物品 1",
+				"time": "",
+				"map": "http://maps.google.com/wish1",
+				"link": "http://example.com/wish1",
+				"note": "預計購買或前往的備註",
+				"expenses": [
+					{
+					"item": "預估支出項目",
+					"amount": 500,
+					"currency": "JPY",
+					"paidBy": "旅伴 A",
+					"sharedWith": [
+						"旅伴 A"
+					]
+					}
+				],
+				"checklist": [
+					{
+					"text": "細項清單 1",
+					"completed": false
+					}
+				]
 				}
 			],
 			"companions": [
-				"我",
-				"小明"
+				"旅伴 A",
+				"旅伴 B"
 			],
 			"isImporting": false,
 			"editTarget": null
 			};
-    }
+	}
 
     // 確保運行時狀態正確
-    state.isImporting = false;
-    if (!state.view) state.view = 'itinerary';
+    //state.isImporting = false;
+    //if (!state.view) state.view = 'itinerary';
 
-    function save() { localStorage.setItem(DB_KEY, JSON.stringify(state)); }
+    // 4. 修改儲存功能：同時存本地與雲端
+	let timeout;
+	function save() {
+		if (!state) return; // 防止 state 為空時報錯
+		
+		// 存本地備份
+		localStorage.setItem(DB_REF, JSON.stringify(state));
+		
+		// 存雲端
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			db.ref(DB_REF).set(state).catch(e => console.error("雲端同步失敗:", e));
+		}, 2000);
+	}
 
     function render() {
         renderTabs();
@@ -1353,7 +1299,8 @@
 			alert('❌ PIN 碼錯誤，操作已取消。');
 		}
 	}
-    render();
+	initApp();
+    //render();
 </script>
 </body>
 </html>
