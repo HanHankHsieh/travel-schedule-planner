@@ -646,6 +646,77 @@
 		::-webkit-scrollbar-thumb:hover {
 			background: linear-gradient(180deg, #3B9BFF, #667eea);
 		}
+
+		/* 手機優化 - 螢幕寬度小於 480px */
+		@media (max-width: 480px) {
+
+			/* Modal 內容優化 */
+			.modal-content {
+				width: 96%;
+				padding: 20px;
+				border-radius: 20px;
+				max-height: 90vh;
+			}
+
+			/* 表單組間距優化 */
+			.form-group {
+				margin-bottom: 16px;
+			}
+
+			/* 標籤優化 */
+			.form-group label {
+				margin-bottom: 6px;
+				font-size: 0.9rem;
+			}
+
+			/* 輸入框優化 */
+			.form-group input,
+			.form-group select,
+			.form-group textarea {
+				padding: 12px 14px;
+				font-size: 0.95rem;
+			}
+
+			/* 表單行間距優化 */
+			.form-row {
+				gap: 12px;
+			}
+
+			/* 按鈕觸控目標優化 */
+			.card-actions button {
+				min-height: 44px;
+				padding: 10px 14px;
+			}
+
+			/* 旅伴管理標籤優化 */
+			.companion-tag {
+				padding: 7px 12px 7px 14px;
+				font-size: 0.88rem;
+			}
+
+			/* 結算卡片優化 */
+			.balance-card-row {
+				padding: 16px;
+			}
+
+			.balance-name {
+				font-size: 1rem;
+			}
+
+			/* 支出卡片優化 */
+			.expense-summary-card {
+				padding: 20px;
+			}
+
+			/* FAB 按鈕位置調整 */
+			.fab {
+				width: 56px;
+				height: 56px;
+				font-size: 28px;
+				right: 20px;
+				bottom: 85px;
+			}
+		}
 	</style>
 </head>
 
