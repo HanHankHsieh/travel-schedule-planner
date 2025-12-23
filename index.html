@@ -710,6 +710,55 @@
 		}
 	}
 	
+	// 轉移景點到其他天數
+	function openTransferModal(spotIdx) {
+		if (state.itinerary.length <= 1) {
+			alert('只有一天行程，無法轉移！');
+			return;
+		}
+		
+		var spot = state.itinerary[state.dayIdx].spots[spotIdx];
+		var currentDayTitle = state.itinerary[state.dayIdx].title;
+		
+		// 建立選擇介面
+		var options = '';
+		for (var i = 0; i < state.itinerary.length; i++) {
+			if (i !== state.dayIdx) { // 排除當前天數
+				options += '<option value="' + i + '">' + state.itinerary[i].title + '</option>';
+			}
+		}
+		
+		var html = '<div style="padding: 20px;">' +
+				   '<h3 style="margin-top:0; color:var(--deep-blue);">🔄 轉移景點</h3>' +
+				   '<p style="color:#666; font-size:0.9rem;">將「' + spot.name + '」從「' + currentDayTitle + '」轉移到：</p>' +
+				   '<select id="transfer-target-day" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid var(--primary-blue); font-size:1rem; margin-bottom:20px;">' +
+				   options +
+				   '</select>' +
+				   '<div style="display:flex; gap:12px;">' +
+				   '<button onclick="closeModal()" style="flex:1; padding:12px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; color:var(--text-main); font-weight:bold; cursor:pointer;">取消</button>' +
+				   '<button onclick="executeTransfer(' + spotIdx + ')" style="flex:1.5; padding:12px; border:none; border-radius:12px; background:var(--accent-blue); color:white; font-weight:bold; cursor:pointer; box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);">確認轉移</button>' +
+				   '</div>' +
+				   '</div>';
+		
+		document.getElementById('modal-body').innerHTML = html;
+		document.getElementById('edit-modal').style.display = 'flex';
+	}
+	
+	function executeTransfer(spotIdx) {
+		var targetDayIdx = parseInt(document.getElementById('transfer-target-day').value);
+		var spot = state.itinerary[state.dayIdx].spots[spotIdx];
+		
+		// 移除原位置
+		state.itinerary[state.dayIdx].spots.splice(spotIdx, 1);
+		
+		// 加入新位置
+		state.itinerary[targetDayIdx].spots.push(spot);
+		
+		closeModal();
+		alert('✅ 已成功轉移到「' + state.itinerary[targetDayIdx].title + '」！');
+		render();
+	}
+
 	function handleDeleteDay(idx) {
 		if (confirm('確定要刪除整個「' + state.itinerary[idx].title + '」嗎？\n內容刪掉後就無法找回喔！')) {
 			state.itinerary.splice(idx, 1);
@@ -779,7 +828,7 @@
 						ckHTML + 
 						exHTML +
 						'<div class="card-actions">' +
-						(isWish ? '<button onclick="state.isImporting=true; openDynamicModal('+index+')">📅匯入</button>' : '') +
+						(isWish ? '<button onclick="state.isImporting=true; openDynamicModal('+index+')">📅匯入</button>' : '<button onclick="openTransferModal('+index+')">🔄轉移</button>') +
 						'<button onclick="state.isImporting=false; openDynamicModal('+index+')">✏️</button>' +
 						'<button onclick="handleDelete('+index+', '+isWish+')">🗑️</button>' +
 						'</div>';
