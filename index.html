@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>旅遊助手 - 最終完整修正版</title>
+	<title>旅遊助手</title>
 	<style>
 		:root {
 			/* 優化後的色彩系統 - 更豐富的藍色調色盤 */
@@ -120,7 +120,9 @@
 			bottom: 0;
 			width: 100%;
 			max-width: 720px;
-			height: 70px;
+			height: auto;
+			min-height: 70px;
+			padding-bottom: 25px;
 			background: rgba(255, 255, 255, 0.95);
 			backdrop-filter: blur(20px);
 			display: flex;
@@ -260,8 +262,8 @@
 
 		.card-time {
 			color: var(--accent-blue);
-			font-weight: 800;
-			font-size: 1.3rem;
+			font-weight: 700;
+			font-size: 2.0rem;
 			text-shadow: 0 2px 8px rgba(59, 155, 255, 0.2);
 		}
 
@@ -653,7 +655,7 @@
 			/* Modal 內容優化 */
 			.modal-content {
 				width: 96%;
-				padding: 20px 20px 78px 20px;
+				padding: 32px 32px 78px 32px;
 				border-radius: 20px;
 				max-height: 90vh;
 			}
