@@ -1,0 +1,459 @@
+/* ====================================
+   UI Modernization & Enhancement CSS
+   增強版旅遊助手視覺效果
+   ==================================== */
+
+/* === 新增豐富漸層色系 === */
+:root {
+	--gradient-ocean: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	--gradient-sunset: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	--gradient-aurora: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+	--gradient-forest: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+	--gradient-warm: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+	--gradient-purple: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+	
+	/* 玻璃擬態效果 */
+	--glass-bg: rgba(255, 255, 255, 0.7);
+	--glass-bg-dark: rgba(255, 255, 255, 0.1);
+	--glass-border: rgba(255, 255, 255, 0.18);
+	--glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+	
+	/* 額外陰影 */
+	--shadow-float: 0 10px 40px rgba(0, 0, 0, 0.1);
+	--shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+	--shadow-glow: 0 0 20px rgba(59, 155, 255, 0.3);
+}
+
+/* === 動畫關鍵幀 === */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeInScale {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes pulse {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: -1000px 0;
+	}
+	100% {
+		background-position: 1000px 0;
+	}
+}
+
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* === 玻璃擬態導覽列 === */
+nav.bottom-nav {
+	background: rgba(255, 255, 255, 0.8) !important;
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border-top: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* === 增強卡片效果 === */
+.spot-card,
+.hotel-card {
+	animation: fadeInUp 0.6s ease-out;
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	border: 2px solid transparent;
+}
+
+.spot-card:hover,
+.hotel-card:hover {
+	transform: translateY(-8px) scale(1.02) !important;
+	box-shadow: var(--shadow-float) !important;
+	border-color: var(--accent-blue);
+}
+
+.spot-card::before,
+.hotel-card::before {
+	transition: all 0.3s ease !important;
+}
+
+.spot-card:hover::before {
+	width: 8px;
+	background: var(--gradient-aurora) !important;
+}
+
+.hotel-card:hover::before {
+	width: 8px;
+	background: var(--gradient-forest) !important;
+}
+
+/* === 機票卡片增強 === */
+.flight-card {
+	animation: fadeInScale 0.6s ease-out;
+	transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	position: relative;
+	overflow: hidden;
+}
+
+.flight-card::after {
+	content: '';
+	position: absolute;
+	top: -50%;
+	right: -50%;
+	width: 200%;
+	height: 200%;
+	background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+	opacity: 0;
+	transition: opacity 0.5s ease;
+	pointer-events: none;
+}
+
+.flight-card:hover::after {
+	opacity: 1;
+}
+
+.flight-card:hover {
+	transform: translateY(-10px) scale(1.03) !important;
+	box-shadow: 0 20px 60px rgba(27, 58, 109, 0.5) !important;
+}
+
+/* === FAB 按鈕增強 === */
+.fab {
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	position: relative;
+	overflow: hidden;
+}
+
+.fab::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.3);
+	transform: translate(-50%, -50%);
+	transition: width 0.6s, height 0.6s;
+}
+
+.fab:active::before {
+	width: 300px;
+	height: 300px;
+}
+
+.fab:hover {
+	transform: scale(1.1) rotate(90deg) !important;
+	box-shadow: 0 12px 40px rgba(59, 155, 255, 0.7) !important;
+}
+
+/* FAB 閒置時的脈動效果 */
+@media (hover: hover) {
+	.fab {
+		animation: pulse 3s ease-in-out infinite;
+	}
+	
+	.fab:hover {
+		animation: none;
+	}
+}
+
+/* === 標籤頁增強 === */
+.tab {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	position: relative;
+}
+
+.tab::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%) scaleX(0);
+	width: 80%;
+	height: 3px;
+	background: var(--gradient-aurora);
+	border-radius: 3px 3px 0 0;
+	transition: transform 0.3s ease;
+}
+
+.tab.active::after {
+	transform: translateX(-50%) scaleX(1);
+}
+
+.tab:hover {
+	transform: translateY(-3px) scale(1.05) !important;
+}
+
+.tab.active {
+	transform: translateY(-2px) scale(1.05) !important;
+}
+
+/* === 按鈕增強效果 === */
+.card-actions button {
+	position: relative;
+	overflow: hidden;
+	transition: all 0.3s ease !important;
+}
+
+.card-actions button::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	background: rgba(59, 155, 255, 0.3);
+	transform: translate(-50%, -50%);
+	transition: width 0.4s, height 0.4s;
+}
+
+.card-actions button:active::before {
+	width: 200px;
+	height: 200px;
+}
+
+/* === Modal 玻璃擬態效果 === */
+.modal {
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+}
+
+.modal-content {
+	background: rgba(255, 255, 255, 0.95) !important;
+	backdrop-filter: blur(40px) saturate(180%);
+	-webkit-backdrop-filter: blur(40px) saturate(180%);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* === 表單輸入框增強 === */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+	transform: translateY(-2px) !important;
+	box-shadow: 0 0 0 4px rgba(59, 155, 255, 0.12), 0 4px 12px rgba(59, 155, 255, 0.2) !important;
+}
+
+/* === 旅伴標籤增強 === */
+.companion-tag {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	animation: slideInRight 0.4s ease-out;
+}
+
+.companion-tag:hover {
+	transform: translateY(-3px) scale(1.05) !important;
+	box-shadow: var(--shadow-card) !important;
+	background: var(--gradient-aurora);
+	color: white;
+}
+
+/* === 結算卡片增強 === */
+.balance-card-row {
+	transition: all 0.3s ease !important;
+	animation: fadeInUp 0.5s ease-out;
+}
+
+.balance-card-row:hover {
+	transform: translateY(-5px) scale(1.02) !important;
+	border-color: var(--accent-blue) !important;
+	box-shadow: var(--shadow-card) !important;
+}
+
+/* === 支出項目增強 === */
+.expense-edit-item {
+	transition: all 0.3s ease !important;
+	animation: fadeInUp 0.4s ease-out;
+}
+
+.expense-edit-item:hover {
+	border-color: var(--accent-blue) !important;
+	box-shadow: var(--shadow-card) !important;
+	transform: translateX(5px);
+}
+
+/* === 記帳選取標籤增強 === */
+.sharer-label {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sharer-label:hover {
+	transform: translateY(-2px) scale(1.05) !important;
+	box-shadow: var(--shadow-sm);
+}
+
+.sharer-label:has(input:checked) {
+	background: var(--gradient-aurora) !important;
+	animation: pulse 0.3s ease-out;
+}
+
+/* === Header 增強 === */
+header {
+	background: var(--gradient-ocean) !important;
+	position: relative;
+	overflow: hidden;
+}
+
+header::before {
+	content: '';
+	position: absolute;
+	top: -50%;
+	right: -50%;
+	width: 200%;
+	height: 200%;
+	background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+	animation: rotate 30s linear infinite;
+}
+
+/* === 新增按鈕 === */
+.btn-add {
+	transition: all 0.3s ease !important;
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-add::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+	transition: left 0.5s;
+}
+
+.btn-add:hover::before {
+	left: 100%;
+}
+
+.btn-add:hover {
+	transform: translateY(-2px) scale(1.02) !important;
+	box-shadow: var(--shadow-card) !important;
+}
+
+/* === 卡片標題增強 === */
+.card-title {
+	transition: color 0.3s ease;
+	position: relative;
+}
+
+.spot-card:hover .card-title,
+.hotel-card:hover .card-title {
+	color: var(--accent-blue);
+}
+
+/* === 載入骨架屏效果 === */
+.skeleton {
+	background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	animation: shimmer 1.5s infinite;
+	border-radius: 8px;
+}
+
+/* === 成功提示動畫 === */
+@keyframes successPulse {
+	0%, 100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(67, 233, 123, 0.7);
+	}
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 0 0 10px rgba(67, 233, 123, 0);
+	}
+}
+
+/* === 平滑滾動 === */
+html {
+	scroll-behavior: smooth;
+}
+
+/* === 內容區塊入場動畫 === */
+.content > * {
+	animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.content > *:nth-child(1) { animation-delay: 0.1s; }
+.content > *:nth-child(2) { animation-delay: 0.2s; }
+.content > *:nth-child(3) { animation-delay: 0.3s; }
+.content > *:nth-child(4) { animation-delay: 0.4s; }
+.content > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* === 手機優化保持流暢 === */
+@media (max-width: 480px) {
+	/* 減少複雜動畫以保持性能 */
+	.spot-card,
+	.hotel-card,
+	.flight-card,
+	.content > * {
+		animation-duration: 0.3s;
+	}
+	
+	/* 簡化hover效果 */
+	.spot-card:hover,
+	.hotel-card:hover {
+		transform: translateY(-4px) scale(1.01) !important;
+	}
+}
+
+/* === 深色模式支援（可選） === */
+@media (prefers-color-scheme: dark) {
+	/* 未來可擴展深色模式 */
+}
+
+/* === 減少動畫（輔助功能） === */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
