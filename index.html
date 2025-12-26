@@ -41,7 +41,7 @@
 			background: linear-gradient(180deg, #F5F7FA 0%, #E8F0FE 100%);
 			color: var(--text-main);
 			margin: 0;
-			padding-bottom: 80px;
+			padding-bottom: calc(95px + env(safe-area-inset-bottom, 0px));
 			min-height: 100vh;
 		}
 
@@ -122,7 +122,7 @@
 			max-width: 720px;
 			height: auto;
 			min-height: 70px;
-			padding-bottom: 25px;
+			padding-bottom: max(25px, env(safe-area-inset-bottom, 15px));
 			background: rgba(255, 255, 255, 0.95);
 			backdrop-filter: blur(20px);
 			display: flex;
@@ -354,9 +354,10 @@
 			background: white;
 			width: 92%;
 			max-width: 550px;
-			padding: 20px;
+			padding: 32px;
+			padding-bottom: max(50px, calc(32px + env(safe-area-inset-bottom, 0px)));
 			border-radius: 28px;
-			max-height: 85vh;
+			max-height: 80vh;
 			overflow-y: auto;
 			box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 			animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -409,7 +410,7 @@
 		/* FAB 優化 - 更有質感的浮動按鈕 */
 		.fab {
 			position: fixed;
-			bottom: 90px;
+			bottom: calc(95px + env(safe-area-inset-bottom, 0px));
 			right: 24px;
 			width: 64px;
 			height: 64px;
@@ -655,9 +656,10 @@
 			/* Modal 內容優化 */
 			.modal-content {
 				width: 96%;
-				padding: 32px 32px 78px 32px;
+				padding: 20px;
+				padding-bottom: max(70px, calc(40px + env(safe-area-inset-bottom, 0px)));
 				border-radius: 20px;
-				max-height: 90vh;
+				max-height: 75vh;
 			}
 
 			/* 表單組間距優化 */
@@ -716,7 +718,7 @@
 				height: 56px;
 				font-size: 28px;
 				right: 20px;
-				bottom: 85px;
+				bottom: calc(100px + env(safe-area-inset-bottom, 0px));
 			}
 		}
 	</style>
