@@ -1133,22 +1133,41 @@
 					(view === 'flight') ? state.flights : state.hotels;
 
 			// 若為行程視圖，則依時間排序
+			// 為了修正編輯按鈕的 index 對應問題，需要記錄原始 index
+			var sortedData = data;
 			if (view === 'itinerary' && data.length > 0) {
-				data = data.slice().sort(function (a, b) {
-					var timeA = a.time || '00:00';
-					var timeB = b.time || '00:00';
+				// 建立包含原始索引的陣列
+				var dataWithIndex = data.map(function (item, idx) {
+					return { item: item, originalIndex: idx };
+				});
+				// 依時間排序
+				dataWithIndex.sort(function (a, b) {
+					var timeA = a.item.time || '00:00';
+					var timeB = b.item.time || '00:00';
 					return timeA.localeCompare(timeB);
 				});
+				// 儲存排序結果，保留原始索引資訊
+				sortedData = dataWithIndex;
 			}
 
-			for (var i = 0; i < data.length; i++) {
-				if (view === 'flight') main.appendChild(createFlightCard(data[i], i));
-				else if (view === 'hotel') main.appendChild(createHotelCard(data[i], i));
-				else main.appendChild(createSpotCard(data[i], i, view === 'wishlist'));
+			for (var i = 0; i < sortedData.length; i++) {
+				// 取得實際項目和原始索引
+				var item, actualIndex;
+				if (view === 'itinerary' && sortedData.length > 0 && sortedData[i].originalIndex !== undefined) {
+					item = sortedData[i].item;
+					actualIndex = sortedData[i].originalIndex;
+				} else {
+					item = sortedData[i];
+					actualIndex = i;
+				}
+
+				if (view === 'flight') main.appendChild(createFlightCard(item, actualIndex));
+				else if (view === 'hotel') main.appendChild(createHotelCard(item, actualIndex));
+				else main.appendChild(createSpotCard(item, actualIndex, view === 'wishlist'));
 			}
 
 			// 如果當天沒行程，顯示一個溫馨提示
-			if (data.length === 0 && view === 'itinerary') {
+			if (sortedData.length === 0 && view === 'itinerary') {
 				var emptyHint = document.createElement('div');
 				emptyHint.style.cssText = "text-align:center; padding:40px 20px; color:#ccc; border:2px dashed #eee; border-radius:15px; margin-top:10px;";
 				emptyHint.innerHTML = '📅 這天還沒有行程喔<br><span style="font-size:0.8rem;">點擊右下角 + 開始新增</span>';
