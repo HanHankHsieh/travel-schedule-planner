@@ -73,16 +73,23 @@
 		/* 標籤頁優化 - 更精緻的設計 */
 		.tabs-container {
 			display: flex;
-			overflow-x: auto;
 			background: white;
 			padding: 20px 16px 14px 16px;
 			border-bottom: 2px solid #F0F4F8;
-			gap: 10px;
+			gap: 8px;
 			align-items: center;
+		}
+
+		/* tabs wrapper 用於包裝可滾動的標籤 */
+		.tabs-wrapper {
+			display: flex;
+			overflow-x: auto;
+			gap: 10px;
+			flex: 1;
 			scrollbar-width: none;
 		}
 
-		.tabs-container::-webkit-scrollbar {
+		.tabs-wrapper::-webkit-scrollbar {
 			display: none;
 		}
 
@@ -113,6 +120,35 @@
 			border-color: transparent;
 			box-shadow: var(--shadow-md);
 			transform: translateY(-2px);
+		}
+
+		/* 箭頭按鈕樣式 */
+		.tab-arrow {
+			background: var(--light-blue);
+			border: 2px solid var(--accent-blue);
+			color: var(--accent-blue);
+			cursor: pointer;
+			padding: 10px 12px;
+			border-radius: 12px;
+			font-size: 1rem;
+			font-weight: bold;
+			transition: all 0.3s ease;
+			flex-shrink: 0;
+			min-width: 44px;
+		}
+
+		.tab-arrow:hover:not(:disabled) {
+			background: var(--accent-blue);
+			color: white;
+			transform: translateY(-2px);
+			box-shadow: var(--shadow-sm);
+		}
+
+		.tab-arrow:disabled {
+			opacity: 0.3;
+			cursor: not-allowed;
+			border-color: #E5E7EB;
+			color: #9CA3AF;
 		}
 
 		/* 底部導覽列優化 - 更有質感 */
@@ -988,13 +1024,30 @@
 			if (state.view !== 'itinerary') { container.classList.add('hidden'); return; }
 			container.classList.remove('hidden');
 
+			// 新增左箭頭
+			var leftArrow = document.createElement('button');
+			leftArrow.className = 'tab-arrow';
+			leftArrow.innerHTML = '◀';
+			leftArrow.disabled = (state.dayIdx === 0);
+			leftArrow.onclick = function () {
+				if (state.dayIdx > 0) {
+					state.dayIdx--;
+					render();
+				}
+			};
+			container.appendChild(leftArrow);
+
+			// 建立 tabs wrapper 用於包裝所有 tab 按鈕
+			var tabsWrapper = document.createElement('div');
+			tabsWrapper.className = 'tabs-wrapper';
+
 			for (var i = 0; i < state.itinerary.length; i++) {
 				(function (idx) {
 					var btn = document.createElement('button');
 					btn.className = (idx === state.dayIdx) ? 'tab active' : 'tab';
 					btn.innerText = state.itinerary[idx].title;
 					btn.onclick = function () { state.dayIdx = idx; render(); };
-					container.appendChild(btn);
+					tabsWrapper.appendChild(btn);
 				})(i);
 			}
 
@@ -1007,7 +1060,22 @@
 				state.dayIdx = state.itinerary.length - 1;
 				render();
 			};
-			container.appendChild(addDay);
+			tabsWrapper.appendChild(addDay);
+
+			container.appendChild(tabsWrapper);
+
+			// 新增右箭頭
+			var rightArrow = document.createElement('button');
+			rightArrow.className = 'tab-arrow';
+			rightArrow.innerHTML = '▶';
+			rightArrow.disabled = (state.dayIdx === state.itinerary.length - 1);
+			rightArrow.onclick = function () {
+				if (state.dayIdx < state.itinerary.length - 1) {
+					state.dayIdx++;
+					render();
+				}
+			};
+			container.appendChild(rightArrow);
 		}
 
 		function renderContent() {
@@ -1063,6 +1131,15 @@
 			var data = (view === 'itinerary') ? state.itinerary[state.dayIdx].spots :
 				(view === 'wishlist') ? state.wishlist :
 					(view === 'flight') ? state.flights : state.hotels;
+
+			// 若為行程視圖，則依時間排序
+			if (view === 'itinerary' && data.length > 0) {
+				data = data.slice().sort(function (a, b) {
+					var timeA = a.time || '00:00';
+					var timeB = b.time || '00:00';
+					return timeA.localeCompare(timeB);
+				});
+			}
 
 			for (var i = 0; i < data.length; i++) {
 				if (view === 'flight') main.appendChild(createFlightCard(data[i], i));
