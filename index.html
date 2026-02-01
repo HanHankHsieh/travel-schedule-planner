@@ -1207,7 +1207,21 @@
 
 				dayControl.appendChild(leftSide);
 				dayControl.appendChild(rightSide);
+
+				// 新增：每日注意事項顯示區塊
+				// 放在 dayControl 下方
+				var noteDiv = document.createElement('div');
+				var currentNote = state.itinerary[state.dayIdx].note || '點擊編輯新增當日注意事項...';
+				noteDiv.style.cssText = "background:#fff; border:1px dashed #cbd5e0; padding:10px 15px; border-radius:10px; margin-bottom:15px; color:#555; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; gap:8px;";
+				noteDiv.innerHTML = '<span style="font-size:1.1rem;">📝</span><span style="flex:1;">' + currentNote + '</span><span style="color:var(--accent-blue); font-size:0.8rem;">✏️</span>';
+				noteDiv.title = "點擊編輯注意事項";
+				noteDiv.onclick = function () { editDayNote(state.dayIdx); };
+
+				// 雖然 renderContent 裡面的 main 已經 append child 了，
+				// 但為了保持結構，我們可以把 dayControl 和 noteDiv 包在一起，或者依序 append
+				// 這裡直接 append 到 main (dayControl 之後)
 				main.appendChild(dayControl);
+				main.appendChild(noteDiv);
 			}
 
 			// 3. 資料獲取與卡片渲染
@@ -1909,6 +1923,20 @@
 				startTransaction(function (data) {
 					if (data.itinerary && data.itinerary[idx]) {
 						data.itinerary[idx].title = newTitle.trim();
+					}
+					return data;
+				});
+			}
+		}
+
+		function editDayNote(idx) {
+			var oldNote = state.itinerary[idx].note || "";
+			var newNote = prompt("請輸入這一天的注意事項：", oldNote);
+
+			if (newNote !== null) {
+				startTransaction(function (data) {
+					if (data.itinerary && data.itinerary[idx]) {
+						data.itinerary[idx].note = newNote.trim();
 					}
 					return data;
 				});
