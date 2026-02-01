@@ -559,7 +559,10 @@
 		/* 手機 Safari 時間選擇器優化 */
 		@supports (-webkit-touch-callout: none) {
 			.form-group input[type="time"] {
+				/* appearance: listbox; */
 				-webkit-appearance: listbox;
+				-moz-appearance: listbox;
+				appearance: listbox;
 			}
 		}
 
@@ -964,19 +967,74 @@
 			// 存本地備份
 			localStorage.setItem(DB_REF, JSON.stringify(state));
 
-
 			// 2. 判斷是否為預設路徑
 			if (DB_REF === 'travel_planner_default') {
-				console.log("📝 目前為預設模式，資料僅儲存於本地瀏覽器。");
-				return; // 直接結束，不執行下方的雲端同步邏輯
+				// console.log("📝 目前為預設模式，資料僅儲存於本地瀏覽器。");
+				return;
 			}
-			// 存雲端
+
+			// 修改：不再自動覆蓋雲端，改由各操作自行呼叫 transaction
+			// 這樣可以避免 overwrite 別人的資料
+			/*
 			clearTimeout(timeout);
 			timeout = setTimeout(() => {
 				db.ref(DB_REF).set(state)
 					.then(() => console.log(`☁️ 雲端同步成功: ${DB_REF}`))
 					.catch(e => console.error("雲端同步失敗:", e));
 			}, 2000);
+			*/
+		}
+
+		// --- 5. 新增 Transaction 輔助函式 ---
+		function startTransaction(updateFunction) {
+			if (DB_REF === 'travel_planner_default') {
+				// 本地模式：直接修改 state 並存檔
+				var newState = updateFunction(state);
+				if (newState) state = newState;
+				save();
+				render();
+				return;
+			}
+
+			// 雲端模式：使用 transaction
+			// 顯示 Loading (簡單示意)
+			var oldText = document.title;
+			document.title = "🔄 同步中...";
+
+			db.ref(DB_REF).transaction(function (currentData) {
+				if (currentData === null) {
+					// 如果雲端為空，以本地 state 為基礎
+					return state;
+				}
+				return updateFunction(currentData);
+			}, function (error, committed, snapshot) {
+				document.title = oldText;
+				if (error) {
+					console.error('Transaction failed:', error);
+					alert("⚠️ 資料同步失敗，請重新操作");
+				} else if (committed) {
+					console.log('Transaction committed!');
+					var remoteData = snapshot.val();
+
+					// 保留本地 UI 狀態 (View, DayIdx 等)
+					// 避免別人切換 View 導致我也被切換
+					if (state) {
+						remoteData.view = state.view;
+						remoteData.dayIdx = state.dayIdx;
+						remoteData.editTarget = state.editTarget;
+						remoteData.isImporting = state.isImporting;
+					}
+
+					state = remoteData;
+
+					// 修正索引邊界 (防錯)
+					if (state.itinerary && state.dayIdx >= state.itinerary.length) {
+						state.dayIdx = Math.max(0, state.itinerary.length - 1);
+					}
+
+					render();
+				}
+			});
 		}
 
 		// === 航班時間格式轉換函數 ===
@@ -1056,9 +1114,24 @@
 			addDay.innerText = '+';
 			addDay.style.border = "1px dashed var(--accent-blue)";
 			addDay.onclick = function () {
-				state.itinerary.push({ title: 'Day ' + (state.itinerary.length + 1), spots: [] });
-				state.dayIdx = state.itinerary.length - 1;
-				render();
+				startTransaction(function (data) {
+					if (!data.itinerary) data.itinerary = [];
+					data.itinerary.push({ title: 'Day ' + (data.itinerary.length + 1), spots: [] });
+					return data;
+				});
+				// 注意：新增後，transaction callback 會 update state 然後 render
+				// 但是我們希望自動切換到新的一天
+				// 這需要在 render 之後做，或者在 transaction 完成後檢查長度變化?
+				// 這裡我們可以簡單做：等到 render 時，若 dayIdx 太舊，使用者手動切換，
+				// 或者我們可以預測性地切換 local state.dayIdx?
+				// 比較好的做法可能是讓 callback 處理，但 callback 是通用的。
+				// 暫時讓使用者自己點擊新的一天 simplest.
+				// 或者：
+				setTimeout(() => {
+					// 預期 transaction 成功後長度 +1
+					// 這裡只是個 UX hack，若 transaction 失敗可能切換到空
+					if (state.itinerary) state.dayIdx = state.itinerary.length - 1;
+				}, 500); // 延遲一下等待 callback
 			};
 			tabsWrapper.appendChild(addDay);
 
@@ -1211,37 +1284,47 @@
 
 		function executeTransfer(spotIdx) {
 			var targetDayIdx = parseInt(document.getElementById('transfer-target-day').value);
-			var spot = state.itinerary[state.dayIdx].spots[spotIdx];
+			// 取得當前景點資料作為移動依據，注意：這裡的 data 是在點擊當下取得的
+			// 但使用 transaction 時，我們應該只傳遞 index 和 intention
 
-			// 移除原位置
-			state.itinerary[state.dayIdx].spots.splice(spotIdx, 1);
+			startTransaction(function (data) {
+				var sourceDay = data.itinerary[state.dayIdx];
+				var targetDay = data.itinerary[targetDayIdx];
 
-			// 加入新位置
-			state.itinerary[targetDayIdx].spots.push(spot);
+				if (sourceDay && sourceDay.spots && sourceDay.spots[spotIdx] && targetDay) {
+					var spot = sourceDay.spots[spotIdx];
+					if (!targetDay.spots) targetDay.spots = [];
+
+					// 移除原位置
+					sourceDay.spots.splice(spotIdx, 1);
+					// 加入新位置
+					targetDay.spots.push(spot);
+				}
+				return data;
+			});
 
 			closeModal();
-			alert('✅ 已成功轉移到「' + state.itinerary[targetDayIdx].title + '」！');
-			render();
+			// alert('✅ 已成功轉移'); // 不需要 render()，transaction 會做
 		}
 
 		function handleDeleteDay(idx) {
 			if (confirm('確定要刪除整個「' + state.itinerary[idx].title + '」嗎？\n內容刪掉後就無法找回喔！')) {
-				state.itinerary.splice(idx, 1);
+				startTransaction(function (data) {
+					if (data.itinerary) {
+						data.itinerary.splice(idx, 1);
+						// 重新排序 Day 標題
+						for (var i = 0; i < data.itinerary.length; i++) {
+							data.itinerary[i].title = 'Day ' + (i + 1);
+						}
+					}
+					return data;
+				});
 
-				// 重新排序 Day 標題
-				for (var i = 0; i < state.itinerary.length; i++) {
-					state.itinerary[i].title = 'Day ' + (i + 1);
+				// UX 優化：調整當前檢視 index
+				if (state.dayIdx >= idx && state.dayIdx > 0) {
+					state.dayIdx--;
 				}
-
-				// 調整當前檢視的 index (防止溢出)
-				if (state.dayIdx >= state.itinerary.length) {
-					state.dayIdx = state.itinerary.length - 1;
-				} else if (state.dayIdx > 0) {
-					state.dayIdx = state.dayIdx - 1; // 刪除後跳轉到前一天，體驗較好
-				}
-
-				save();
-				render();
+				// 這裡不用 call render, transaction 會 call
 			}
 		}
 		// --- 卡片生成 (含刪除按鈕) ---
@@ -1301,11 +1384,16 @@
 		}
 
 		// 快速勾選功能
+		// 快速勾選功能
 		function toggleCheckItem(spotIdx, itemIdx, isWish) {
-			var data = isWish ? state.wishlist[spotIdx] : state.itinerary[state.dayIdx].spots[spotIdx];
-			data.checklist[itemIdx].completed = !data.checklist[itemIdx].completed;
-			save();
-			render();
+			startTransaction(function (data) {
+				var targetArr = isWish ? data.wishlist : data.itinerary[state.dayIdx].spots;
+				// 簡單防護：確認該項目還存在
+				if (targetArr && targetArr[spotIdx] && targetArr[spotIdx].checklist && targetArr[spotIdx].checklist[itemIdx]) {
+					targetArr[spotIdx].checklist[itemIdx].completed = !targetArr[spotIdx].checklist[itemIdx].completed;
+				}
+				return data;
+			});
 		}
 
 		function createFlightCard(f, i) {
@@ -1529,94 +1617,124 @@
 		function handleDynamicSave() {
 			var view = state.view;
 			var target = state.editTarget;
-			var obj = {};
+
+			// --- 1. 先讀取 UI 資料 (Outside Transaction) ---
+			var flightData = null, hotelData = null, spotData = null;
+			var expenses = [], checklist = [];
+			var importTargetDayIdx = (state.isImporting) ? document.getElementById('f-target-day').value : null;
 
 			if (view === 'flight') {
 				var flightTime = document.getElementById('fl-time').value;
-				obj = {
+				flightData = {
 					airline: document.getElementById('fl-airline').value,
 					flightNo: document.getElementById('fl-no').value,
-					depTime: datetimeToDisplay(flightTime), // 轉換為 MM/dd hh:mm 格式儲存
+					depTime: datetimeToDisplay(flightTime),
 					from: document.getElementById('fl-from').value,
 					to: document.getElementById('fl-to').value,
 					gate: document.getElementById('fl-gate').value,
 					seat: document.getElementById('fl-seat').value
 				};
-				if (target) state.flights[target.index] = obj; else state.flights.push(obj);
 			} else if (view === 'hotel') {
-				obj = {
+				hotelData = {
 					name: document.getElementById('ht-name').value,
 					checkIn: document.getElementById('ht-checkin').value,
 					map: document.getElementById('ht-map').value,
 					link: document.getElementById('ht-link').value,
 					note: document.getElementById('ht-note').value
 				};
-				if (target) state.hotels[target.index] = obj; else state.hotels.push(obj);
 			} else {
-				// 1. 修改記帳資料收集：加入付款人 (paidBy)
-				var exArr = [];
+				// 收集記帳與清單
 				var exRows = document.querySelectorAll('#m-expense-list .expense-edit-item');
 				exRows.forEach(function (row) {
 					var amt = row.querySelector('.ex-amt').value;
 					if (amt) {
-						// 收集該筆支出被勾選的分攤者
 						var selectedSharers = [];
 						var sharerCheckboxes = row.querySelectorAll('.ex-sharer:checked');
-						sharerCheckboxes.forEach(function (cb) {
-							selectedSharers.push(cb.value);
-						});
+						sharerCheckboxes.forEach(function (cb) { selectedSharers.push(cb.value); });
+						if (selectedSharers.length === 0) selectedSharers.push(row.querySelector('.ex-payer').value);
 
-						// 如果完全沒勾，自動預設由付款人自己承擔 (防止除以 0)
-						if (selectedSharers.length === 0) {
-							selectedSharers.push(row.querySelector('.ex-payer').value);
-						}
-
-						exArr.push({
+						expenses.push({
 							item: row.querySelector('.ex-item').value,
 							amount: parseFloat(amt),
 							currency: row.querySelector('.ex-cur').value,
 							paidBy: row.querySelector('.ex-payer').value,
-							sharedWith: selectedSharers // 儲存勾選的人員名單
+							sharedWith: selectedSharers
 						});
 					}
 				});
-
-				// 2. 修改待買清單收集：防止編輯時 completed 狀態被洗掉
-				var ckArr = [];
 				var ckRows = document.querySelectorAll('#m-check-list .item-row');
 				ckRows.forEach(function (row) {
 					var text = row.querySelector('.ck-text').value;
 					if (text) {
-						// 這裡加上一個判斷，如果是編輯現有項目，嘗試保留原本的勾選狀態
-						// (這部分如果比較複雜，最簡單是先抓 text 就好)
-						ckArr.push({ text: text, completed: false });
+						// 盡量保留原本的勾選狀態? 新增的預設 false
+						checklist.push({ text: text, completed: false });
 					}
 				});
 
-				// 3. 組合物件 (這部分維持你的結構)
-				obj = {
+				spotData = {
 					name: document.getElementById('f-name').value,
 					time: document.getElementById('f-time').value,
 					map: document.getElementById('f-map').value,
 					link: document.getElementById('f-link').value,
 					note: document.getElementById('f-note').value,
-					expenses: exArr,
-					checklist: ckArr
+					expenses: expenses,
+					checklist: checklist
 				};
-
-				if (state.isImporting) {
-					var day = document.getElementById('f-target-day').value;
-					state.itinerary[day].spots.push(obj);
-					state.isImporting = false;
-				} else if (target) {
-					if (view === 'itinerary') state.itinerary[state.dayIdx].spots[target.index] = obj;
-					else state.wishlist[target.index] = obj;
-				} else {
-					if (view === 'itinerary') state.itinerary[state.dayIdx].spots.push(obj);
-					else state.wishlist.push(obj);
-				}
 			}
-			closeModal(); render();
+
+			// --- 2. 執行 Transaction 更新資料 ---
+			startTransaction(function (data) {
+				// 確保結構存在
+				if (!data.flights) data.flights = [];
+				if (!data.hotels) data.hotels = [];
+				if (!data.wishlist) data.wishlist = [];
+				if (!data.itinerary) data.itinerary = [];
+
+				if (view === 'flight' && flightData) {
+					if (target) data.flights[target.index] = flightData;
+					else data.flights.push(flightData);
+				}
+				else if (view === 'hotel' && hotelData) {
+					if (target) data.hotels[target.index] = hotelData;
+					else data.hotels.push(hotelData);
+				}
+				else if (spotData) {
+					// 處理 spot/wishlist
+					if (state.isImporting && importTargetDayIdx !== null) {
+						// 匯入模式
+						if (data.itinerary[importTargetDayIdx]) {
+							if (!data.itinerary[importTargetDayIdx].spots) data.itinerary[importTargetDayIdx].spots = [];
+							data.itinerary[importTargetDayIdx].spots.push(spotData);
+						}
+					} else if (target) {
+						// 編輯模式
+						if (view === 'itinerary') {
+							// 若天數依然存在
+							if (data.itinerary[state.dayIdx]) {
+								if (!data.itinerary[state.dayIdx].spots) data.itinerary[state.dayIdx].spots = [];
+								data.itinerary[state.dayIdx].spots[target.index] = spotData;
+							}
+						} else {
+							data.wishlist[target.index] = spotData;
+						}
+					} else {
+						// 新增模式
+						if (view === 'itinerary') {
+							if (data.itinerary[state.dayIdx]) {
+								if (!data.itinerary[state.dayIdx].spots) data.itinerary[state.dayIdx].spots = [];
+								data.itinerary[state.dayIdx].spots.push(spotData);
+							}
+						} else {
+							data.wishlist.push(spotData);
+						}
+					}
+				}
+				return data;
+			});
+
+			closeModal();
+			state.isImporting = false; // 重置匯入旗標
+			// 不需手動 render，transaction 成功會 render
 		}
 
 		function closeModal() { document.getElementById('edit-modal').style.display = 'none'; }
@@ -1642,9 +1760,36 @@
 		}
 
 		// 刪除邏輯
-		function handleDelete(idx, isWish) { if (confirm('刪除項目？')) { if (isWish) state.wishlist.splice(idx, 1); else state.itinerary[state.dayIdx].spots.splice(idx, 1); render(); } }
-		function handleDeleteFlight(idx) { if (confirm('刪除機票？')) { state.flights.splice(idx, 1); render(); } }
-		function handleDeleteHotel(idx) { if (confirm('刪除飯店？')) { state.hotels.splice(idx, 1); render(); } }
+		function handleDelete(idx, isWish) {
+			if (confirm('刪除項目？')) {
+				startTransaction(function (data) {
+					if (isWish) {
+						if (data.wishlist) data.wishlist.splice(idx, 1);
+					} else {
+						if (data.itinerary && data.itinerary[state.dayIdx] && data.itinerary[state.dayIdx].spots) {
+							data.itinerary[state.dayIdx].spots.splice(idx, 1);
+						}
+					}
+					return data;
+				});
+			}
+		}
+		function handleDeleteFlight(idx) {
+			if (confirm('刪除機票？')) {
+				startTransaction(function (data) {
+					if (data.flights) data.flights.splice(idx, 1);
+					return data;
+				});
+			}
+		}
+		function handleDeleteHotel(idx) {
+			if (confirm('刪除飯店？')) {
+				startTransaction(function (data) {
+					if (data.hotels) data.hotels.splice(idx, 1);
+					return data;
+				});
+			}
+		}
 		// --- 記帳結算頁面 ---
 		function renderExpensePage() {
 			var main = document.getElementById('main-content');
@@ -1719,18 +1864,29 @@
 			if (!name) return alert('請輸入姓名');
 			if (state.companions.indexOf(name) !== -1) return alert('姓名重複了');
 
-			state.companions.push(name);
-			input.value = '';
-			save();
-			render(); // 重新渲染整個頁面
+			input.value = ''; // 提早清空 UI
+
+			startTransaction(function (data) {
+				if (!data.companions) data.companions = [];
+				if (data.companions.indexOf(name) === -1) {
+					data.companions.push(name);
+				}
+				return data;
+			});
 		}
 
 		function removeCompanion(index) {
+			var targetName = state.companions[index]; // 先取得要刪的名字，因為 index 在 transaction 中可能不準
 			if (state.companions.length <= 1) return alert('至少需要一名旅伴');
-			if (confirm('確定刪除旅伴 ' + state.companions[index] + '？\n這可能會影響結算精確度。')) {
-				state.companions.splice(index, 1);
-				save();
-				render();
+
+			if (confirm('確定刪除旅伴 ' + targetName + '？\n這可能會影響結算精確度。')) {
+				startTransaction(function (data) {
+					if (data.companions) {
+						var idx = data.companions.indexOf(targetName);
+						if (idx !== -1) data.companions.splice(idx, 1);
+					}
+					return data;
+				});
 			}
 		}
 
@@ -1739,9 +1895,13 @@
 			var newTitle = prompt("請輸入這一天的名稱（例如：Day 1 東京）：", oldTitle);
 
 			if (newTitle !== null && newTitle.trim() !== "") {
-				state.itinerary[idx].title = newTitle.trim();
-				save();
-				render(); // 重新渲染 Tabs 與內容區
+				// 這裡假設 idx 對應正確，Day 的順序比較少變動
+				startTransaction(function (data) {
+					if (data.itinerary && data.itinerary[idx]) {
+						data.itinerary[idx].title = newTitle.trim();
+					}
+					return data;
+				});
 			}
 		}
 
@@ -1782,8 +1942,17 @@
 				const parsed = JSON.parse(jsonStr);
 				state = parsed;
 				// 同步到 LocalStorage
-				localStorage.setItem('travel_app_data', JSON.stringify(state));
-				alert('✅ 資料已成功更新！');
+				localStorage.setItem(DB_REF, JSON.stringify(state));
+
+				// Admin 模式：強制覆蓋雲端
+				if (DB_REF !== 'travel_planner_default') {
+					db.ref(DB_REF).set(state)
+						.then(() => alert('✅ 資料已成功還原並同步至雲端！'))
+						.catch(e => alert('⚠️ 雲端同步失敗: ' + e));
+				} else {
+					alert('✅ 本地資料已更新！');
+				}
+
 				render();
 			} catch (e) {
 				alert('❌ JSON 格式錯誤，請檢查符號是否成對。\n' + e.message);
