@@ -1078,6 +1078,11 @@
 
 		function renderTabs() {
 			var container = document.getElementById('tabs-section');
+
+			// 自動滾動修正：紀錄目前的滾動位置
+			var oldWrapper = container.querySelector('.tabs-wrapper');
+			var savedScrollLeft = oldWrapper ? oldWrapper.scrollLeft : 0;
+
 			container.innerHTML = '';
 			if (state.view !== 'itinerary') { container.classList.add('hidden'); return; }
 			container.classList.remove('hidden');
@@ -1136,6 +1141,11 @@
 			tabsWrapper.appendChild(addDay);
 
 			container.appendChild(tabsWrapper);
+
+			// 自動滾動修正：還原滾動位置
+			if (savedScrollLeft > 0) {
+				tabsWrapper.scrollLeft = savedScrollLeft;
+			}
 
 			// 新增右箭頭
 			var rightArrow = document.createElement('button');
